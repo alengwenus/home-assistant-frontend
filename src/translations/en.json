@@ -2200,6 +2200,13 @@
             "cancel_command": "Cancel Command"
           }
         },
+        "lcn": {
+          "caption": "LCN",
+          "title": "Local Control Network",
+          "header": "Configure LCN",
+          "introduction": "Here it is possible to configure the LCN integration. Not everything is possible to configure from the UI yet, but we're working on it.",
+          "description": "Manage the Local Control Network"
+        },
         "zha": {
           "button": "Configure",
           "common": {

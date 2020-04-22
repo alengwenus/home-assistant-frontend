@@ -177,6 +177,18 @@ export const configSections: { [name: string]: PageNavigation[] } = {
       iconPath: mdiInformation,
       core: true,
     },
+    {
+      component: "lcn",
+      path: "/config/lcn",
+      translationKey: "ui.panel.config.lcn.caption",
+      icon: "hass:tools",
+    },
+    {
+      component: "zha",
+      path: "/config/zha",
+      translationKey: "component.zha.title",
+      icon: "hass:zigbee",
+    },
   ],
   advanced: [
     {
@@ -284,6 +296,13 @@ class HaPanelConfig extends HassRouterPage {
       zone: {
         tag: "ha-config-zone",
         load: () => import("./zone/ha-config-zone"),
+      },
+      lcn: {
+        tag: "ha-config-lcn",
+        load: () =>
+          import(
+            /* webpackChunkName: "panel-config-lcn" */ "./lcn/ha-config-lcn"
+          ),
       },
       zha: {
         tag: "zha-config-dashboard-router",
