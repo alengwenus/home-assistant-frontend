@@ -1,6 +1,7 @@
 import "@polymer/paper-dropdown-menu/paper-dropdown-menu";
 import "@polymer/paper-item/paper-item";
 import "@polymer/paper-listbox/paper-listbox";
+import "@polymer/iron-collapse/iron_collapse";
 import {
   css,
   customElement,
@@ -16,7 +17,7 @@ import {
   fetchHosts,
   fetchConfig,
   LcnHosts,
-  LcnConfig,
+  LcnDeviceConfig,
 } from "../../../data/lcn";
 
 @customElement("ha-config-lcn")
@@ -31,7 +32,7 @@ export class HaConfigLcn extends LitElement {
 
   @property() private _host: string = "";
 
-  @property() private _config: LcnConfig[] = [];
+  @property() private _device_configs: LcnDeviceConfig[] = [];
 
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
@@ -58,8 +59,7 @@ export class HaConfigLcn extends LitElement {
 
           <paper-dropdown-menu
             label="Hosts"
-            @selected-item-changed=${this._hostChanged}
-          >
+            @selected-item-changed=${this._hostChanged}>
             <paper-listbox slot="dropdown-content" selected="0">
               ${this._hosts.map((host) => {
                 return html`
@@ -68,6 +68,20 @@ export class HaConfigLcn extends LitElement {
               })}
             </paper-listbox>
           </paper-dropdown-menu>
+
+
+          <paper-listbox>
+            ${this._device_configs.map((device) => {
+              return html`
+                <paper-item .itemValue = ${device}>
+                  ${device.name}
+                  <iron_collapse>
+                  </iron_collapse>
+                </paper-item>
+              `;
+            })}
+          </paper-listbox>
+
         </ha-config-section>
       </hass-subpage>
     `;
@@ -87,8 +101,7 @@ export class HaConfigLcn extends LitElement {
   }
 
   private async _fetchConfig(host: string) {
-    this._config = await fetchConfig(this.hass!, host);
-    // console.log(this._config)
+    this._device_configs = await fetchConfig(this.hass!, host);
   }
 }
 
