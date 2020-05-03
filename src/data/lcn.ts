@@ -18,6 +18,7 @@ export interface LcnPlatformsConfig {
 }
 
 export interface LcnDeviceConfig {
+  name: string;
   segment_id: number;
   address_id: number;
   is_group: boolean;
