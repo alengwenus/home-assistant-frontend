@@ -1,3 +1,6 @@
+import "@polymer/paper-dropdown-menu/paper-dropdown-menu";
+import "@polymer/paper-item/paper-item";
+import "@polymer/paper-listbox/paper-listbox";
 import {
   css,
   customElement,
@@ -9,7 +12,12 @@ import {
 import { html } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import "../../../layouts/hass-subpage";
-import { fetchModules, LcnModule } from "../../../data/lcn";
+import {
+  fetchHosts,
+  fetchConfig,
+  LcnHosts,
+  LcnConfig,
+} from "../../../data/lcn";
 
 @customElement("ha-config-lcn")
 export class HaConfigLcn extends LitElement {
@@ -19,12 +27,16 @@ export class HaConfigLcn extends LitElement {
 
   @property() public narrow!: boolean;
 
-  @property() private _modules: LcnModule[] = [];
+  @property() private _hosts: LcnHosts[] = [];
+
+  @property() private _host: string = "";
+
+  @property() private _config: LcnConfig[] = [];
 
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
     if (this.hass) {
-      this._fetchModules();
+      this._fetchHosts();
     }
   }
 
@@ -40,24 +52,43 @@ export class HaConfigLcn extends LitElement {
             ${this.hass.localize("ui.panel.config.lcn.introduction")}
           </div>
 
-          ${this._modules.map((module) => {
-            return html`
-              <ha-card>
-                ${module.name}
-              </ha-card>
-            `;
-          })}
-
           <ha-card>
             Hello LCN!
           </ha-card>
+
+          <paper-dropdown-menu
+            label="Hosts"
+            @selected-item-changed=${this._hostChanged}
+          >
+            <paper-listbox slot="dropdown-content" selected="0">
+              ${this._hosts.map((host) => {
+                return html`
+                  <paper-item .itemValue=${host.name}>${host.name}</paper-item>
+                `;
+              })}
+            </paper-listbox>
+          </paper-dropdown-menu>
         </ha-config-section>
       </hass-subpage>
     `;
   }
 
-  private async _fetchModules() {
-    this._modules = await fetchModules(this.hass!);
+  private _hostChanged(ev: CustomEvent) {
+    if (!ev.detail.value) {
+      return;
+    }
+    this._host = ev.detail.value.itemValue;
+    console.log(ev.detail.value.itemValue);
+    this._fetchConfig(this._host);
+  }
+
+  private async _fetchHosts() {
+    this._hosts = await fetchHosts(this.hass!);
+  }
+
+  private async _fetchConfig(host: string) {
+    this._config = await fetchConfig(this.hass!, host);
+    // console.log(this._config)
   }
 }
 
