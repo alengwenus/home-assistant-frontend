@@ -9,12 +9,19 @@ export interface LcnHosts {
 }
 
 export interface SwitchConfig {
-  name: string;
   output: string;
 }
 
-export interface LcnPlatformsConfig {
-  switch?: [SwitchConfig];
+export interface LightConfig {
+  output: string;
+  dimmable?: boolean;
+  transition?: number;
+}
+
+export interface LcnEntityConfig {
+  name: string;
+  platform: string;
+  platform_data: [SwitchConfig | LightConfig];
 }
 
 export interface LcnDeviceConfig {
@@ -22,7 +29,7 @@ export interface LcnDeviceConfig {
   segment_id: number;
   address_id: number;
   is_group: boolean;
-  platforms: LcnPlatformsConfig;
+  entities: [LcnEntityConfig];
 }
 
 export const fetchHosts = (hass: HomeAssistant): Promise<LcnHosts[]> =>
