@@ -81,7 +81,6 @@ export class HaConfigLCN extends LitElement {
       return;
     }
     this._host = ev.detail.value.itemValue;
-    console.log(ev.detail.value.itemValue);
     this._fetchConfig(this._host);
   }
 
