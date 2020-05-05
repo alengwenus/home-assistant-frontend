@@ -20,6 +20,7 @@ export interface LightConfig {
 
 export interface LcnEntityConfig {
   name: string;
+  unique_id: string;
   platform: string;
   platform_data: [SwitchConfig | LightConfig];
 }
