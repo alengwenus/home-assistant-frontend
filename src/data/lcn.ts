@@ -22,14 +22,19 @@ export interface LcnEntityConfig {
   name: string;
   unique_id: string;
   platform: string;
+  resource: string;
   platform_data: [SwitchConfig | LightConfig];
 }
 
 export interface LcnDeviceConfig {
   name: string;
+  unique_id: string;
   segment_id: number;
   address_id: number;
   is_group: boolean;
+  hardware_serial: number;
+  software_serial: number;
+  hardware_type: number;
   entities: [LcnEntityConfig];
 }
 
@@ -44,5 +49,14 @@ export const fetchConfig = (
 ): Promise<LcnDeviceConfig[]> =>
   hass.callWS({
     type: "lcn/config",
+    host: host,
+  });
+
+export const scanDevices = (
+  hass: HomeAssistant,
+  host: string
+): Promise<LcnDeviceConfig[]> =>
+  hass.callWS({
+    type: "lcn/devices/scan",
     host: host,
   });
