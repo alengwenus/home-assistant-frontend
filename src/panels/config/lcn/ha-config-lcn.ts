@@ -19,6 +19,7 @@ import { computeRTL } from "../../../common/util/compute_rtl";
 import {
   fetchHosts,
   fetchConfig,
+  scanDevices,
   LcnHosts,
   LcnDeviceConfig,
 } from "../../../data/lcn";
@@ -57,18 +58,28 @@ export class HaConfigLCN extends LitElement {
             ${this.hass.localize("ui.panel.config.lcn.introduction")}
           </div>
 
-          <paper-dropdown-menu
-            label="Hosts"
-            @selected-item-changed=${this._hostChanged}
-          >
-            <paper-listbox slot="dropdown-content" selected="0">
-              ${this._hosts.map((host) => {
-                return html`
-                  <paper-item .itemValue=${host.name}>${host.name}</paper-item>
-                `;
-              })}
-            </paper-listbox>
-          </paper-dropdown-menu>
+          <div id="box">
+            <div id="hosts-dropdown">
+              <paper-dropdown-menu
+                label="Hosts"
+                @selected-item-changed=${this._hostChanged}
+              >
+                <paper-listbox slot="dropdown-content" selected="0">
+                  ${this._hosts.map((host) => {
+                    return html`
+                      <paper-item .itemValue=${host.name}
+                        >${host.name}</paper-item
+                      >
+                    `;
+                  })}
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
+
+            <div id="scan-devices-button">
+              <mwc-button @click=${this._scanDevices}>Scan devices</mwc-button>
+            </div>
+          </div>
 
           <lcn-devices-data-table
             .hass=${this.hass}
@@ -109,12 +120,28 @@ export class HaConfigLCN extends LitElement {
     this._device_configs = await fetchConfig(this.hass!, host);
   }
 
+  private async _scanDevices(host: string) {
+    this._device_configs = await scanDevices(this.hass!, this._host);
+  }
+
   private _createItem() {}
 
   static get styles(): CSSResult[] {
     return [
       haStyle,
       css`
+        #box {
+          display: flex;
+          justify-content: space-between;
+        }
+        #hosts-dropdown {
+          width: 50%;
+          display: inline-block;
+        }
+        #scan-devices-button {
+          display: inline-block;
+          margin-top: 20px;
+        }
         ha-fab {
           position: fixed;
           bottom: 16px;

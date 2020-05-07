@@ -1,6 +1,5 @@
 import "@vaadin/vaadin-grid";
 import { GridElement } from "@vaadin/vaadin-grid";
-import "@vaadin/vaadin-grid/vaadin-grid-sort-column";
 import {
   css,
   customElement,
@@ -38,6 +37,10 @@ export class LCNEntitiesDataTable extends LitElement {
           path="platform"
           header="Platform"
         ></vaadin-grid-column>
+        <vaadin-grid-column
+          path="resource"
+          header="Resource"
+        ></vaadin-grid-column>
       </vaadin-grid>
     `;
   }
@@ -71,34 +74,37 @@ export class LCNDevicesDataTable extends LitElement {
       <vaadin-grid
         height-by-rows
         multi-sort
-        direction="asc"
         .items=${this.devices}
         @active-item-changed="${(event) => {
           this.activeItemChanged(event);
         }}"
       >
-        <vaadin-grid-sort-column
+        <vaadin-grid-column
+          id="segment_id_column"
           path="segment_id"
           header="Segment"
           width="90px"
           flex-grow="0"
-        ></vaadin-grid-sort-column>
-        <vaadin-grid-sort-column
+        ></vaadin-grid-column>
+        <vaadin-grid-column
+          id="address_id_column"
           path="address_id"
           header="ID"
           width="90px"
           flex-grow="0"
-        ></vaadin-grid-sort-column>
-        <vaadin-grid-sort-column
+        ></vaadin-grid-column>
+        <vaadin-grid-column
+          id="is_group_column"
           path="is_group"
           header="Group"
           width="90px"
           flex-grow="0"
-        ></vaadin-grid-sort-column>
-        <vaadin-grid-sort-column
+        ></vaadin-grid-column>
+        <vaadin-grid-column
+          id="name_column"
           path="name"
           header="Name"
-        ></vaadin-grid-sort-column>
+        ></vaadin-grid-column>
       </vaadin-grid>
     `;
   }
