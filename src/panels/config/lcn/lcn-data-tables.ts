@@ -1,5 +1,6 @@
 import "@vaadin/vaadin-grid";
 import { GridElement } from "@vaadin/vaadin-grid";
+import "@polymer/iron-icon/iron-icon";
 import {
   css,
   customElement,
@@ -41,6 +42,16 @@ export class LCNEntitiesDataTable extends LitElement {
           path="resource"
           header="Resource"
         ></vaadin-grid-column>
+        <vaadin-grid-column
+          id="delete_entity_column"
+          width="60px"
+          text-align="center"
+          flex-grow="0"
+        >
+          <template>
+            <iron-icon icon="hass:delete"></iron-icon>
+          </template>
+        </vaadin-grid-column>
       </vaadin-grid>
     `;
   }
@@ -105,6 +116,16 @@ export class LCNDevicesDataTable extends LitElement {
           path="name"
           header="Name"
         ></vaadin-grid-column>
+        <vaadin-grid-column
+          id="delete_device_column"
+          width="60px"
+          text-align="center"
+          flex-grow="0"
+        >
+          <template>
+            <iron-icon icon="hass:delete"></iron-icon>
+          </template>
+        </vaadin-grid-column>
       </vaadin-grid>
     `;
   }
