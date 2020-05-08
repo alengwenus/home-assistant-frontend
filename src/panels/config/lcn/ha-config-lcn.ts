@@ -1,3 +1,4 @@
+import "@material/mwc-button";
 import "@polymer/paper-dropdown-menu/paper-dropdown-menu";
 import "@polymer/paper-item/paper-item";
 import "@polymer/paper-listbox/paper-listbox";
@@ -77,7 +78,9 @@ export class HaConfigLCN extends LitElement {
             </div>
 
             <div id="scan-devices-button">
-              <mwc-button @click=${this._scanDevices}>Scan devices</mwc-button>
+              <mwc-button raised @click=${this._scanDevices}
+                >Scan devices</mwc-button
+              >
             </div>
           </div>
 
