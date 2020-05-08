@@ -1,6 +1,6 @@
 import "@vaadin/vaadin-grid";
-import { GridElement } from "@vaadin/vaadin-grid";
-import "@polymer/iron-icon/iron-icon";
+import { GridElement, GridColumnElement } from "@vaadin/vaadin-grid";
+import "@polymer/paper-icon-button/paper-icon-button";
 import {
   css,
   customElement,
@@ -24,14 +24,18 @@ export class LCNEntitiesDataTable extends LitElement {
 
   @query("vaadin-grid") private _grid!: GridElement;
 
+  @query("#delete-entity-column")
+  private _delete_entity_column!: GridColumnElement;
+
+  protected firstUpdated(changedProperties: PropertyValues): void {
+    this._delete_entity_column.renderer = this._deleteEntityRenderer;
+  }
+
   protected render() {
     return html`
       <vaadin-grid
         height-by-rows
         .items=${this.device ? this.device.entities : []}
-        @active-item-changed="${(event) => {
-          this.activeItemChanged(event);
-        }}"
       >
         <vaadin-grid-column path="name" header="Name"></vaadin-grid-column>
         <vaadin-grid-column
@@ -43,23 +47,34 @@ export class LCNEntitiesDataTable extends LitElement {
           header="Resource"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          id="delete_entity_column"
-          width="60px"
+          id="delete-entity-column"
+          width="70px"
           text-align="center"
           flex-grow="0"
-        >
-          <template>
-            <iron-icon icon="hass:delete"></iron-icon>
-          </template>
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
       </vaadin-grid>
     `;
   }
 
-  private activeItemChanged(event) {
-    const item = event.detail.value;
-    if (item) {
-      this._grid.selectedItems = item ? [item] : [];
+  // private _activeItemChanged(event) {
+  //   const item = event.detail.value;
+  //   if (item) {
+  //     this._grid.selectedItems = item ? [item] : [];
+  //   }
+  // }
+
+  private _deleteEntityRenderer(root, column, rowData) {
+    if (!root.firstElementChild) {
+      render(
+        html`
+          <paper-icon-button title="Delete entity" icon="hass:delete">
+          </paper-icon-button>
+        `,
+        root
+      );
+      root.firstElementChild.addEventListener("click", function (e) {
+        deleteEntity(rowData.item);
+      });
     }
   }
 }
@@ -74,10 +89,14 @@ export class LCNDevicesDataTable extends LitElement {
 
   @query("vaadin-grid") private _grid!: GridElement;
 
+  @query("#delete-device-column")
+  private _delete_device_column!: GridColumnElement;
+
   private _last_item!: LcnDeviceConfig;
 
   protected firstUpdated(changedProperties: PropertyValues): void {
-    this._grid.rowDetailsRenderer = this.rowDetailsRenderer;
+    this._grid.rowDetailsRenderer = this._rowDetailsRenderer;
+    this._delete_device_column.renderer = this._deleteDeviceRenderer;
   }
 
   protected render() {
@@ -87,50 +106,46 @@ export class LCNDevicesDataTable extends LitElement {
         multi-sort
         .items=${this.devices}
         @active-item-changed="${(event) => {
-          this.activeItemChanged(event);
+          this._activeItemChanged(event);
         }}"
       >
         <vaadin-grid-column
-          id="segment_id_column"
+          id="segment-id-column"
           path="segment_id"
           header="Segment"
           width="90px"
           flex-grow="0"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          id="address_id_column"
+          id="address-id-column"
           path="address_id"
           header="ID"
           width="90px"
           flex-grow="0"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          id="is_group_column"
+          id="is-group-column"
           path="is_group"
           header="Group"
           width="90px"
           flex-grow="0"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          id="name_column"
+          id="name-column"
           path="name"
           header="Name"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          id="delete_device_column"
-          width="60px"
+          id="delete-device-column"
+          width="70px"
           text-align="center"
           flex-grow="0"
-        >
-          <template>
-            <iron-icon icon="hass:delete"></iron-icon>
-          </template>
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
       </vaadin-grid>
     `;
   }
 
-  private activeItemChanged(event) {
+  private _activeItemChanged(event) {
     if (this._last_item) {
       this._grid.closeItemDetails(this._last_item);
     }
@@ -144,7 +159,7 @@ export class LCNDevicesDataTable extends LitElement {
     this._last_item = item;
   }
 
-  private rowDetailsRenderer(root, grid, rowData) {
+  private _rowDetailsRenderer(root, grid, rowData) {
     if (rowData.detailsOpened) {
       if (!root.firstElementChild) {
         render(
@@ -159,6 +174,30 @@ export class LCNDevicesDataTable extends LitElement {
       }
     }
   }
+
+  private _deleteDeviceRenderer(root, column, rowData) {
+    if (!root.firstElementChild) {
+      // root.innerHTML="<paper-icon-button title='Delete device' icon='hass:delete'></paper-icon-button>";
+      render(
+        html`
+          <paper-icon-button title="Delete device" icon="hass:delete">
+          </paper-icon-button>
+        `,
+        root
+      );
+      root.firstElementChild.addEventListener("click", function (e) {
+        deleteDevice(rowData.item);
+      });
+    }
+  }
+}
+
+function deleteDevice(item: LcnDeviceConfig) {
+  console.log(item);
+}
+
+function deleteEntity(item: LcnEntityConfig) {
+  console.log(item);
 }
 
 declare global {
