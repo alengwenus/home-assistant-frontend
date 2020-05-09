@@ -24,13 +24,6 @@ export class LCNEntitiesDataTable extends LitElement {
 
   @query("vaadin-grid") private _grid!: GridElement;
 
-  @query("#delete-entity-column")
-  private _delete_entity_column!: GridColumnElement;
-
-  protected firstUpdated(changedProperties: PropertyValues): void {
-    this._delete_entity_column.renderer = this._deleteEntityRenderer;
-  }
-
   protected render() {
     return html`
       <vaadin-grid
@@ -51,6 +44,7 @@ export class LCNEntitiesDataTable extends LitElement {
           width="70px"
           text-align="center"
           flex-grow="0"
+          .renderer=${this._deleteEntityRenderer}
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
@@ -67,8 +61,10 @@ export class LCNEntitiesDataTable extends LitElement {
     if (!root.firstElementChild) {
       render(
         html`
-          <paper-icon-button title="Delete entity" icon="hass:delete">
-          </paper-icon-button>
+          <paper-icon-button
+            title="Delete entity"
+            icon="hass:delete"
+          ></paper-icon-button>
         `,
         root
       );
@@ -89,15 +85,7 @@ export class LCNDevicesDataTable extends LitElement {
 
   @query("vaadin-grid") private _grid!: GridElement;
 
-  @query("#delete-device-column")
-  private _delete_device_column!: GridColumnElement;
-
   private _last_item!: LcnDeviceConfig;
-
-  protected firstUpdated(changedProperties: PropertyValues): void {
-    this._grid.rowDetailsRenderer = this._rowDetailsRenderer;
-    this._delete_device_column.renderer = this._deleteDeviceRenderer;
-  }
 
   protected render() {
     return html`
@@ -105,6 +93,7 @@ export class LCNDevicesDataTable extends LitElement {
         height-by-rows
         multi-sort
         .items=${this.devices}
+        .rowDetailsRenderer=${this._rowDetailsRenderer}
         @active-item-changed="${(event) => {
           this._activeItemChanged(event);
         }}"
@@ -140,6 +129,7 @@ export class LCNDevicesDataTable extends LitElement {
           width="70px"
           text-align="center"
           flex-grow="0"
+          .renderer=${this._deleteDeviceRenderer}
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
@@ -177,11 +167,12 @@ export class LCNDevicesDataTable extends LitElement {
 
   private _deleteDeviceRenderer(root, column, rowData) {
     if (!root.firstElementChild) {
-      // root.innerHTML="<paper-icon-button title='Delete device' icon='hass:delete'></paper-icon-button>";
       render(
         html`
-          <paper-icon-button title="Delete device" icon="hass:delete">
-          </paper-icon-button>
+          <paper-icon-button
+            title="Delete device"
+            icon="hass:delete"
+          ></paper-icon-button>
         `,
         root
       );
