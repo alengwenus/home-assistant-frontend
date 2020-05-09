@@ -36,7 +36,7 @@ export class HaConfigLCN extends LitElement {
 
   @property() private _hosts: LcnHosts[] = [];
 
-  @property() private _host: string = "";
+  @property() private host: string = "";
 
   @property() private _device_configs: LcnDeviceConfig[] = [];
 
@@ -86,6 +86,7 @@ export class HaConfigLCN extends LitElement {
 
           <lcn-devices-data-table
             .hass=${this.hass}
+            .host=${this.host}
             .devices=${this._device_configs}
             .narrow=${this.narrow}
           ></lcn-devices-data-table>
@@ -111,8 +112,8 @@ export class HaConfigLCN extends LitElement {
     if (!ev.detail.value) {
       return;
     }
-    this._host = ev.detail.value.itemValue;
-    this._fetchConfig(this._host);
+    this.host = ev.detail.value.itemValue;
+    this._fetchConfig(this.host);
   }
 
   private async _fetchHosts() {

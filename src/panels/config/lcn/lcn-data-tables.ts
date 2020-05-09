@@ -12,7 +12,11 @@ import {
 } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
-import { LcnDeviceConfig, LcnEntityConfig } from "../../../data/lcn";
+import {
+  LcnDeviceConfig,
+  LcnEntityConfig,
+  deleteEntity,
+} from "../../../data/lcn";
 
 @customElement("lcn-entities-data-table")
 export class LCNEntitiesDataTable extends LitElement {
@@ -20,9 +24,19 @@ export class LCNEntitiesDataTable extends LitElement {
 
   @property() public narrow: boolean = false;
 
+  @property() public host: string = "";
+
   @property() public device?: LcnDeviceConfig;
 
   @query("vaadin-grid") private _grid!: GridElement;
+
+  private _boundDeleteEntityRenderer!: any;
+
+  constructor() {
+    super();
+    // need this to invoke class methods in renderers
+    this._boundDeleteEntityRenderer = this._deleteEntityRenderer.bind(this);
+  }
 
   protected render() {
     return html`
@@ -44,7 +58,7 @@ export class LCNEntitiesDataTable extends LitElement {
           width="70px"
           text-align="center"
           flex-grow="0"
-          .renderer=${this._deleteEntityRenderer}
+          .renderer=${this._boundDeleteEntityRenderer}
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
@@ -68,9 +82,9 @@ export class LCNEntitiesDataTable extends LitElement {
         `,
         root
       );
-      root.firstElementChild.addEventListener("click", function (e) {
-        deleteEntity(rowData.item);
-      });
+      root.firstElementChild.onclick = (e) => {
+        deleteEntity(this.hass, this.host, <LcnEntityConfig>rowData.item);
+      };
     }
   }
 }
@@ -81,11 +95,20 @@ export class LCNDevicesDataTable extends LitElement {
 
   @property() public narrow: boolean = false;
 
+  @property() public host: string = "";
+
   @property() public devices: LcnDeviceConfig[] = [];
 
   @query("vaadin-grid") private _grid!: GridElement;
 
+  private _boundRowDetailsRenderer!: any;
+
   private _last_item!: LcnDeviceConfig;
+
+  constructor() {
+    super();
+    this._boundRowDetailsRenderer = this._rowDetailsRenderer.bind(this);
+  }
 
   protected render() {
     return html`
@@ -93,7 +116,7 @@ export class LCNDevicesDataTable extends LitElement {
         height-by-rows
         multi-sort
         .items=${this.devices}
-        .rowDetailsRenderer=${this._rowDetailsRenderer}
+        .rowDetailsRenderer=${this._boundRowDetailsRenderer}
         @active-item-changed="${(event) => {
           this._activeItemChanged(event);
         }}"
@@ -156,6 +179,7 @@ export class LCNDevicesDataTable extends LitElement {
           html`
             <lcn-entities-data-table
               .hass=${this.hass}
+              .host=${this.host}
               .device=${<LcnDeviceConfig>rowData.item}
             ></lcn-entities-data-table>
           `,
@@ -187,9 +211,9 @@ function deleteDevice(item: LcnDeviceConfig) {
   console.log(item);
 }
 
-function deleteEntity(item: LcnEntityConfig) {
-  console.log(item);
-}
+// function deleteEntity(item: LcnEntityConfig) {
+//   console.log(item);
+// }
 
 declare global {
   interface HTMLElementTagNameMap {
