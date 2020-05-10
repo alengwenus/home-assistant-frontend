@@ -45,6 +45,14 @@ export class HaConfigLCN extends LitElement {
     if (this.hass) {
       this._fetchHosts();
     }
+
+    this.addEventListener("rows-changed", async (e) => {
+      this._fetchConfig(this.host);
+      // this.requestUpdate()
+      // this._grid.notifyResize();
+      // this._grid.render();
+      // this.requestUpdate();
+    });
   }
 
   protected render(): TemplateResult {
@@ -125,7 +133,7 @@ export class HaConfigLCN extends LitElement {
   }
 
   private async _scanDevices(host: string) {
-    this._device_configs = await scanDevices(this.hass!, this._host);
+    this._device_configs = await scanDevices(this.hass!, this.host);
   }
 
   private _createItem() {}
