@@ -64,28 +64,29 @@ export class LCNEntitiesDataTable extends LitElement {
     `;
   }
 
-  // private _activeItemChanged(event) {
-  //   const item = event.detail.value;
-  //   if (item) {
-  //     this._grid.selectedItems = item ? [item] : [];
-  //   }
-  // }
-
   private _deleteEntityRenderer(root, column, rowData) {
-    if (!root.firstElementChild) {
-      render(
-        html`
-          <paper-icon-button
-            title="Delete entity"
-            icon="hass:delete"
-          ></paper-icon-button>
-        `,
-        root
-      );
-      root.firstElementChild.onclick = (e) => {
-        deleteEntity(this.hass, this.host, <LcnEntityConfig>rowData.item);
-      };
-    }
+    render(
+      html`
+        <paper-icon-button
+          title="Delete entity"
+          icon="hass:delete"
+        ></paper-icon-button>
+      `,
+      root
+    );
+    root.firstElementChild.onclick = (e) => {
+      this._deleteEntity(<LcnEntityConfig>rowData.item);
+    };
+  }
+
+  private async _deleteEntity(item: LcnEntityConfig) {
+    await deleteEntity(this.hass, this.host, item);
+    this.dispatchEvent(
+      new CustomEvent("rows-changed", {
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 }
 
@@ -104,6 +105,19 @@ export class LCNDevicesDataTable extends LitElement {
   private _boundRowDetailsRenderer!: any;
 
   private _last_item!: LcnDeviceConfig;
+
+  private _last_index!: number;
+
+  updated(changedProperties) {
+    if (
+      changedProperties.has("devices") &&
+      typeof this._last_index !== "undefined"
+    ) {
+      const item = this._grid.items[this._last_index];
+      this._grid.openItemDetails(item);
+      this._last_item = item;
+    }
+  }
 
   constructor() {
     super();
@@ -173,19 +187,23 @@ export class LCNDevicesDataTable extends LitElement {
   }
 
   private _rowDetailsRenderer(root, grid, rowData) {
+    // if (!root.firstElementChild) {
+    // console.log(rowData.item);
     if (rowData.detailsOpened) {
-      if (!root.firstElementChild) {
-        render(
-          html`
-            <lcn-entities-data-table
-              .hass=${this.hass}
-              .host=${this.host}
-              .device=${<LcnDeviceConfig>rowData.item}
-            ></lcn-entities-data-table>
-          `,
-          root
-        );
-      }
+      this._last_index = rowData.index;
+    }
+
+    if (true) {
+      render(
+        html`
+          <lcn-entities-data-table
+            .hass=${this.hass}
+            .host=${this.host}
+            .device=${<LcnDeviceConfig>rowData.item}
+          ></lcn-entities-data-table>
+        `,
+        root
+      );
     }
   }
 
