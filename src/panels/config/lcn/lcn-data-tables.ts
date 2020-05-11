@@ -30,14 +30,6 @@ export class LCNEntitiesDataTable extends LitElement {
 
   @query("vaadin-grid") private _grid!: GridElement;
 
-  private _boundDeleteEntityRenderer!: any;
-
-  constructor() {
-    super();
-    // need this to invoke class methods in renderers
-    this._boundDeleteEntityRenderer = this._deleteEntityRenderer.bind(this);
-  }
-
   protected render() {
     return html`
       <vaadin-grid
@@ -58,7 +50,7 @@ export class LCNEntitiesDataTable extends LitElement {
           width="70px"
           text-align="center"
           flex-grow="0"
-          .renderer=${this._boundDeleteEntityRenderer}
+          .renderer=${this._deleteEntityRenderer.bind(this)}
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
@@ -102,8 +94,6 @@ export class LCNDevicesDataTable extends LitElement {
 
   @query("vaadin-grid") private _grid!: GridElement;
 
-  private _boundRowDetailsRenderer!: any;
-
   private _last_item!: LcnDeviceConfig;
 
   private _last_index!: number;
@@ -119,18 +109,13 @@ export class LCNDevicesDataTable extends LitElement {
     }
   }
 
-  constructor() {
-    super();
-    this._boundRowDetailsRenderer = this._rowDetailsRenderer.bind(this);
-  }
-
   protected render() {
     return html`
       <vaadin-grid
         height-by-rows
         multi-sort
         .items=${this.devices}
-        .rowDetailsRenderer=${this._boundRowDetailsRenderer}
+        .rowDetailsRenderer=${this._rowDetailsRenderer.bind(this)}
         @active-item-changed="${(event) => {
           this._activeItemChanged(event);
         }}"
