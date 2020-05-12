@@ -1,11 +1,12 @@
 import "@vaadin/vaadin-grid";
 import { GridElement } from "@vaadin/vaadin-grid";
-import "@polymer/paper-icon-button/paper-icon-button";
+import "@polymer/iron-icon";
 import { css, customElement, LitElement, property, query } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import { LcnDeviceConfig } from "../../../data/lcn";
 import "./lcn-entities-data-table";
+import "../../../resources/mdi-icons";
 
 @customElement("lcn-devices-data-table")
 export class LCNDevicesDataTable extends LitElement {
@@ -45,6 +46,12 @@ export class LCNDevicesDataTable extends LitElement {
           this._activeItemChanged(event);
         }}"
       >
+        <vaadin-grid-column
+          id="expand_item-column"
+          width="70px"
+          flex-grow="0"
+          .renderer=${this._expandItemRenderer}
+        ></vaadin-grid-column>
         <vaadin-grid-column
           id="segment-id-column"
           path="segment_id"
@@ -103,18 +110,30 @@ export class LCNDevicesDataTable extends LitElement {
       this._last_index = rowData.index;
     }
 
-    if (true) {
-      render(
-        html`
-          <lcn-entities-data-table
-            .hass=${this.hass}
-            .host=${this.host}
-            .device=${<LcnDeviceConfig>rowData.item}
-          ></lcn-entities-data-table>
-        `,
-        root
-      );
-    }
+    render(
+      html`
+        <lcn-entities-data-table
+          .hass=${this.hass}
+          .host=${this.host}
+          .device=${<LcnDeviceConfig>rowData.item}
+        ></lcn-entities-data-table>
+      `,
+      root
+    );
+  }
+
+  private _expandItemRenderer(root, grid, rowData) {
+    render(
+      html`
+        <iron-icon
+          id="expand-item-icon"
+          icon=${rowData.detailsOpened
+            ? "mdi:chevron-down"
+            : "mdi:chevron-right"}
+        ></iron-icon>
+      `,
+      root
+    );
   }
 
   private _deleteDeviceRenderer(root, column, rowData) {
