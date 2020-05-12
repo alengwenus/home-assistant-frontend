@@ -65,7 +65,7 @@ export const deleteEntity = (
   hass: HomeAssistant,
   host: string,
   entity: LcnEntityConfig
-): Promise<LcnDeviceConfig> =>
+): Promise<void> =>
   hass.callWS({
     type: "lcn/entity/delete",
     host: host,

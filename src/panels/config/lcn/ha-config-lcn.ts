@@ -14,7 +14,7 @@ import {
 import { html } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import "../../../layouts/hass-subpage";
-import "./lcn-data-tables";
+import "./lcn-devices-data-table";
 import "../../../components/ha-fab";
 import { computeRTL } from "../../../common/util/compute_rtl";
 import {
