@@ -20,18 +20,16 @@ export class LCNDevicesDataTable extends LitElement {
 
   @query("vaadin-grid") private _grid!: GridElement;
 
-  private _last_item!: LcnDeviceConfig;
-
-  private _last_index!: number;
+  private _last_opened_items: string[] = []; // unique_ids of opened items
 
   updated(changedProperties) {
-    if (
-      changedProperties.has("devices") &&
-      typeof this._last_index !== "undefined"
-    ) {
-      const item = this._grid.items[this._last_index];
-      this._grid.openItemDetails(item);
-      this._last_item = item;
+    if (changedProperties.has("devices")) {
+      // open all items with stored unique_ids
+      for (let item of this._grid.items) {
+        if (this._last_opened_items.includes(item.unique_id)) {
+          this._grid.openItemDetails(item);
+        }
+      }
     }
   }
 
@@ -42,8 +40,8 @@ export class LCNDevicesDataTable extends LitElement {
         multi-sort
         .items=${this.devices}
         .rowDetailsRenderer=${this._rowDetailsRenderer.bind(this)}
-        @active-item-changed="${(event) => {
-          this._activeItemChanged(event);
+        @click="${(event) => {
+          this._gridItemClicked(event);
         }}"
       >
         <vaadin-grid-column
@@ -89,27 +87,25 @@ export class LCNDevicesDataTable extends LitElement {
     `;
   }
 
-  private _activeItemChanged(event) {
-    if (this._last_item) {
-      this._grid.closeItemDetails(this._last_item);
+  private _gridItemClicked(event) {
+    const context = this._grid.getEventContext(event);
+    const item = context.item;
+    // open/close item details for clicked items and store/remove unique_id
+    if (context.section == "body") {
+      if (this._last_opened_items.includes(item.unique_id)) {
+        this._grid.closeItemDetails(item);
+        this._last_opened_items = this._last_opened_items.filter(
+          (e) => e !== item.unique_id
+        );
+      } else {
+        this._grid.openItemDetails(item);
+        this._last_opened_items.push(item.unique_id);
+      }
+      this._grid.notifyResize();
     }
-
-    const item = event.detail.value;
-    if (item) {
-      this._grid.selectedItems = item ? [item] : [];
-      this._grid.openItemDetails(item);
-    }
-    this._grid.notifyResize();
-    this._last_item = item;
   }
 
   private _rowDetailsRenderer(root, grid, rowData) {
-    // if (!root.firstElementChild) {
-    // console.log(rowData.item);
-    if (rowData.detailsOpened) {
-      this._last_index = rowData.index;
-    }
-
     render(
       html`
         <lcn-entities-data-table
