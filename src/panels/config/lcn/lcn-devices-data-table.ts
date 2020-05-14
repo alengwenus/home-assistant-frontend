@@ -4,7 +4,7 @@ import "@polymer/iron-icon";
 import { css, customElement, LitElement, property, query } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
-import { LcnDeviceConfig } from "../../../data/lcn";
+import { LcnDeviceConfig, deleteDevice } from "../../../data/lcn";
 import "./lcn-entities-data-table";
 import "../../../resources/mdi-icons";
 
@@ -81,7 +81,7 @@ export class LCNDevicesDataTable extends LitElement {
           width="70px"
           text-align="center"
           flex-grow="0"
-          .renderer=${this._deleteDeviceRenderer}
+          .renderer=${this._deleteDeviceRenderer.bind(this)}
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
@@ -133,30 +133,31 @@ export class LCNDevicesDataTable extends LitElement {
   }
 
   private _deleteDeviceRenderer(root, column, rowData) {
-    if (!root.firstElementChild) {
-      render(
-        html`
-          <paper-icon-button
-            title="Delete device"
-            icon="hass:delete"
-          ></paper-icon-button>
-        `,
-        root
-      );
-      root.firstElementChild.addEventListener("click", function (e) {
-        deleteDevice(rowData.item);
-      });
-    }
+    render(
+      html`
+        <paper-icon-button
+          title="Delete device"
+          icon="hass:delete"
+        ></paper-icon-button>
+      `,
+      root
+    );
+    root.firstElementChild.onclick = (event) => {
+      event.stopPropagation();
+      this._deleteDevice(<LcnDeviceConfig>rowData.item);
+    };
+  }
+
+  private async _deleteDevice(item: LcnDeviceConfig) {
+    await deleteDevice(this.hass, this.host, item);
+    this.dispatchEvent(
+      new CustomEvent("table-items-changed", {
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 }
-
-function deleteDevice(item: LcnDeviceConfig) {
-  console.log(item);
-}
-
-// function deleteEntity(item: LcnEntityConfig) {
-//   console.log(item);
-// }
 
 declare global {
   interface HTMLElementTagNameMap {
