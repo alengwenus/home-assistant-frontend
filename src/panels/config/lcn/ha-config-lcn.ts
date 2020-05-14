@@ -2,6 +2,7 @@ import "@material/mwc-button";
 import "@polymer/paper-dropdown-menu/paper-dropdown-menu";
 import "@polymer/paper-item/paper-item";
 import "@polymer/paper-listbox/paper-listbox";
+import "@polymer/paper-spinner/paper-spinner";
 import {
   css,
   customElement,
@@ -39,6 +40,8 @@ export class HaConfigLCN extends LitElement {
   @property() private host: string = "";
 
   @property() private _device_configs: LcnDeviceConfig[] = [];
+
+  @property() private _scanning: boolean = false;
 
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
@@ -94,19 +97,6 @@ export class HaConfigLCN extends LitElement {
             .devices=${this._device_configs}
             .narrow=${this.narrow}
           ></lcn-devices-data-table>
-
-          <ha-fab
-            icon="hass:plus"
-            aria-label="New device or entity"
-            title="New device or entity"
-            @click=${this._createItem}
-            ?is-wide=${this.isWide}
-            ?narrow=${this.narrow}
-            ?rtl=${computeRTL(this.hass!)}
-            --
-          >
-            ></ha-fab
-          >
         </ha-config-section>
       </hass-subpage>
     `;
@@ -129,7 +119,9 @@ export class HaConfigLCN extends LitElement {
   }
 
   private async _scanDevices(host: string) {
+    this._scanning = true;
     this._device_configs = await scanDevices(this.hass!, this.host);
+    this._scanning = false;
   }
 
   private _createItem() {}
@@ -149,28 +141,6 @@ export class HaConfigLCN extends LitElement {
         #scan-devices-button {
           display: inline-block;
           margin-top: 20px;
-        }
-        ha-fab {
-          position: fixed;
-          bottom: 16px;
-          right: 16px;
-          z-index: 1;
-        }
-        ha-fab[is-wide] {
-          bottom: 24px;
-          right: 24px;
-        }
-        ha-fab[narrow] {
-          bottom: 84px;
-        }
-        ha-fab[rtl] {
-          right: auto;
-          left: 16px;
-        }
-        ha-fab[is-wide].rtl {
-          bottom: 24px;
-          left: 24px;
-          right: auto;
         }
       `,
     ];

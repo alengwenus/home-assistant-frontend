@@ -1,7 +1,15 @@
 import "@vaadin/vaadin-grid";
 import { GridElement } from "@vaadin/vaadin-grid";
 import "@polymer/iron-icon";
-import { css, customElement, LitElement, property, query } from "lit-element";
+import "@polymer/paper-tooltip/paper-tooltip";
+import {
+  css,
+  customElement,
+  CSSResult,
+  LitElement,
+  property,
+  query,
+} from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import { LcnDeviceConfig, deleteDevice } from "../../../data/lcn";
@@ -35,6 +43,19 @@ export class LCNDevicesDataTable extends LitElement {
 
   protected render() {
     return html`
+      <dom-module id="lcn-grid" theme-for="vaadin-grid">
+        <template>
+          <style>
+            :host [part~="row"]:hover [part~="body-cell"] {
+              background-color: rgba(var(--rgb-primary-text-color), 0.04);
+            }
+            /* :host [part~="body-cell"] ::slotted(vaadin-grid-cell-content){
+              cursor: pointer;
+            } */
+          </style>
+        </template>
+      </dom-module>
+
       <vaadin-grid
         height-by-rows
         multi-sort
@@ -81,6 +102,7 @@ export class LCNDevicesDataTable extends LitElement {
           width="70px"
           text-align="center"
           flex-grow="0"
+          .headerRenderer=${this._addDeviceRenderer.bind(this)}
           .renderer=${this._deleteDeviceRenderer.bind(this)}
         ></vaadin-grid-column>
       </vaadin-grid>
@@ -132,11 +154,23 @@ export class LCNDevicesDataTable extends LitElement {
     );
   }
 
+  private _addDeviceRenderer(root, column, rowData) {
+    render(
+      html`
+        <paper-icon-button
+          title="Add new LCN device (module or group)"
+          icon="hass:plus"
+        ></paper-icon-button>
+      `,
+      root
+    );
+  }
+
   private _deleteDeviceRenderer(root, column, rowData) {
     render(
       html`
         <paper-icon-button
-          title="Delete device"
+          title="Delete LCN device"
           icon="hass:delete"
         ></paper-icon-button>
       `,
