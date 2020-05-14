@@ -42,10 +42,23 @@ export class LCNEntitiesDataTable extends LitElement {
           width="70px"
           text-align="center"
           flex-grow="0"
+          .headerRenderer=${this._addEntityRenderer.bind(this)}
           .renderer=${this._deleteEntityRenderer.bind(this)}
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
+  }
+
+  private _addEntityRenderer(root, column, rowData) {
+    render(
+      html`
+        <paper-icon-button
+          title="Create new entity"
+          icon="hass:plus"
+        ></paper-icon-button>
+      `,
+      root
+    );
   }
 
   private _deleteEntityRenderer(root, column, rowData) {
