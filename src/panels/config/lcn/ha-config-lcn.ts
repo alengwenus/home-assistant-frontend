@@ -46,12 +46,8 @@ export class HaConfigLCN extends LitElement {
       this._fetchHosts();
     }
 
-    this.addEventListener("rows-changed", async (e) => {
+    this.addEventListener("table-items-changed", async (event) => {
       this._fetchConfig(this.host);
-      // this.requestUpdate()
-      // this._grid.notifyResize();
-      // this._grid.render();
-      // this.requestUpdate();
     });
   }
 

@@ -58,7 +58,8 @@ export class LCNEntitiesDataTable extends LitElement {
       `,
       root
     );
-    root.firstElementChild.onclick = (e) => {
+    root.firstElementChild.onclick = (event) => {
+      event.stopPropagation();
       this._deleteEntity(<LcnEntityConfig>rowData.item);
     };
   }
@@ -66,7 +67,7 @@ export class LCNEntitiesDataTable extends LitElement {
   private async _deleteEntity(item: LcnEntityConfig) {
     await deleteEntity(this.hass, this.host, item);
     this.dispatchEvent(
-      new CustomEvent("rows-changed", {
+      new CustomEvent("table-items-changed", {
         bubbles: true,
         composed: true,
       })
