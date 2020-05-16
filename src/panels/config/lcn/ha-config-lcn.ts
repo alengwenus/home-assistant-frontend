@@ -16,10 +16,15 @@ import {
 import { html } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import "../../../layouts/hass-subpage";
-import "../../../components/ha-fab";
+import "../ha-config-section";
+import "../../../layouts/hass-loading-screen";
+import "../../../components/ha-card";
 import "./lcn-devices-data-table";
-import "./lcn-dialogs";
-import { showLCNScanModulesDialog, ScanModulesDialog } from "./lcn-dialogs";
+import { ScanModulesDialog } from "./lcn-scan-modules-dialog";
+import {
+  loadLCNScanModulesDialog,
+  showLCNScanModulesDialog,
+} from "./show-dialog-scan-modules";
 
 import {
   fetchHosts,
@@ -29,15 +34,14 @@ import {
   LcnDeviceConfig,
 } from "../../../data/lcn";
 import { haStyle } from "../../../resources/styles";
-import { fireEvent } from "../../../common/dom/fire_event";
 
 @customElement("ha-config-lcn")
 export class HaConfigLCN extends LitElement {
   @property() public hass!: HomeAssistant;
 
-  @property() public isWide!: boolean;
+  @property() public isWide?: boolean;
 
-  @property() public narrow!: boolean;
+  @property() public narrow?: boolean;
 
   @property() private _hosts: LcnHosts[] = [];
 
@@ -45,15 +49,10 @@ export class HaConfigLCN extends LitElement {
 
   @property() private _device_configs: LcnDeviceConfig[] = [];
 
-  @query("#controls") private _controls: any;
-
-  @query("#scan-dialog") private _scan_dialog: any;
-
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
-    if (this.hass) {
-      this._fetchHosts();
-    }
+    this._fetchHosts();
+    loadLCNScanModulesDialog();
 
     this.addEventListener("table-items-changed", async (event) => {
       this._fetchConfig(this.host);
@@ -61,16 +60,20 @@ export class HaConfigLCN extends LitElement {
   }
 
   protected render(): TemplateResult {
+    if (!this.hass) {
+      return html` <hass-loading-screen></hass-loading-screen> `;
+    }
+    const hass = this.hass;
     return html`
-      <hass-subpage .header=${this.hass.localize("ui.panel.config.lcn.title")}>
+      <hass-subpage .header=${hass.localize("ui.panel.config.lcn.title")}>
         <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide}>
-          <div slot="header">
-            ${this.hass.localize("ui.panel.config.lcn.header")}
-          </div>
+          <span slot="header">
+            ${hass.localize("ui.panel.config.lcn.header")}
+          </span>
 
-          <div slot="introduction">
-            ${this.hass.localize("ui.panel.config.lcn.introduction")}
-          </div>
+          <span slot="introduction">
+            ${hass.localize("ui.panel.config.lcn.introduction")}
+          </span>
 
           <div id="controls">
             <div id="box">
@@ -129,14 +132,11 @@ export class HaConfigLCN extends LitElement {
   }
 
   private async _scanDevices(host: string) {
-    // this._controls.classList.add("disabled");
-    // this._scan_dialog.open();
-    const dialog: any = showLCNScanModulesDialog(this);
+    const dialog: () =>
+      | ScanModulesDialog
+      | undefined = showLCNScanModulesDialog(this);
     this._device_configs = await scanDevices(this.hass!, this.host);
-    dialog().closeDialog();
-    // fireEvent(this, "close-dialog");
-    // this._scan_dialog.close();
-    // this._controls.classList.remove("disabled");
+    dialog()!.closeDialog();
   }
 
   private _createItem() {}

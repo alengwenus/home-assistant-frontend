@@ -14,33 +14,10 @@ import {
 } from "lit-element";
 import { html } from "lit-html";
 import { haStyleDialog } from "../../../resources/styles";
-import { fireEvent } from "../../../common/dom/fire_event";
-
-const getDialog = () => {
-  return document
-    .querySelector("home-assistant")!
-    .shadowRoot!.querySelector("lcn-scan-modules-dialog") as
-    | ScanModulesDialog
-    | undefined;
-};
-
-export const loadLCNScanModulesDialog = () =>
-  import(/* webpackChunkName: "lcn-dialogs" */ "./lcn-dialogs");
-
-export const showLCNScanModulesDialog = (
-  element: HTMLElement
-): (() => ScanModulesDialog | undefined) => {
-  fireEvent(element, "show-dialog", {
-    dialogTag: "lcn-scan-modules-dialog",
-    dialogImport: loadLCNScanModulesDialog,
-    dialogParams: {},
-  });
-  return getDialog;
-};
 
 @customElement("lcn-scan-modules-dialog")
 export class ScanModulesDialog extends LitElement {
-  @query("#scan-dialog") private _dialog: any;
+  @query("ha-paper-dialog") private _dialog: any;
 
   public async showDialog(params: any): Promise<void> {
     this.open();
@@ -53,9 +30,13 @@ export class ScanModulesDialog extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <ha-paper-dialog modal id="scan-dialog" @close-dialog=${this.closeDialog}>
+      <ha-paper-dialog modal @close-dialog=${this.closeDialog}>
         <div id="dialog-content">
           <h3>Scanning modules...</h3>
+          <p>
+            Scanning of modules might take up to 30 seconds.<br />
+            This dialog will close automatically.
+          </p>
           <paper-spinner active></paper-spinner>
         </div>
       </ha-paper-dialog>
