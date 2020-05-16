@@ -11,13 +11,16 @@ import {
   PropertyValues,
   TemplateResult,
   CSSResult,
+  query,
 } from "lit-element";
 import { html } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import "../../../layouts/hass-subpage";
-import "./lcn-devices-data-table";
 import "../../../components/ha-fab";
-import { computeRTL } from "../../../common/util/compute_rtl";
+import "./lcn-devices-data-table";
+import "./lcn-dialogs";
+import { showLCNScanModulesDialog, ScanModulesDialog } from "./lcn-dialogs";
+
 import {
   fetchHosts,
   fetchConfig,
@@ -26,6 +29,7 @@ import {
   LcnDeviceConfig,
 } from "../../../data/lcn";
 import { haStyle } from "../../../resources/styles";
+import { fireEvent } from "../../../common/dom/fire_event";
 
 @customElement("ha-config-lcn")
 export class HaConfigLCN extends LitElement {
@@ -41,7 +45,9 @@ export class HaConfigLCN extends LitElement {
 
   @property() private _device_configs: LcnDeviceConfig[] = [];
 
-  @property() private _scanning: boolean = false;
+  @query("#controls") private _controls: any;
+
+  @query("#scan-dialog") private _scan_dialog: any;
 
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
@@ -66,37 +72,41 @@ export class HaConfigLCN extends LitElement {
             ${this.hass.localize("ui.panel.config.lcn.introduction")}
           </div>
 
-          <div id="box">
-            <div id="hosts-dropdown">
-              <paper-dropdown-menu
-                label="Hosts"
-                @selected-item-changed=${this._hostChanged}
-              >
-                <paper-listbox slot="dropdown-content" selected="0">
-                  ${this._hosts.map((host) => {
-                    return html`
-                      <paper-item .itemValue=${host.name}
-                        >${host.name}</paper-item
-                      >
-                    `;
-                  })}
-                </paper-listbox>
-              </paper-dropdown-menu>
+          <div id="controls">
+            <div id="box">
+              <div id="hosts-dropdown">
+                <paper-dropdown-menu
+                  label="Hosts"
+                  @selected-item-changed=${this._hostChanged}
+                >
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    ${this._hosts.map((host) => {
+                      return html`
+                        <paper-item .itemValue=${host.name}
+                          >${host.name}</paper-item
+                        >
+                      `;
+                    })}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+
+              <div id="scan-devices">
+                <mwc-button raised @click=${this._scanDevices}
+                  >Scan devices</mwc-button
+                >
+              </div>
             </div>
 
-            <div id="scan-devices-button">
-              <mwc-button raised @click=${this._scanDevices}
-                >Scan devices</mwc-button
-              >
-            </div>
+            <lcn-devices-data-table
+              .hass=${this.hass}
+              .host=${this.host}
+              .devices=${this._device_configs}
+              .narrow=${this.narrow}
+            ></lcn-devices-data-table>
           </div>
 
-          <lcn-devices-data-table
-            .hass=${this.hass}
-            .host=${this.host}
-            .devices=${this._device_configs}
-            .narrow=${this.narrow}
-          ></lcn-devices-data-table>
+          <lcn-scan-modules-dialog id="scan-dialog"></lcn-scan-modules-dialog>
         </ha-config-section>
       </hass-subpage>
     `;
@@ -119,9 +129,14 @@ export class HaConfigLCN extends LitElement {
   }
 
   private async _scanDevices(host: string) {
-    this._scanning = true;
+    // this._controls.classList.add("disabled");
+    // this._scan_dialog.open();
+    const dialog: any = showLCNScanModulesDialog(this);
     this._device_configs = await scanDevices(this.hass!, this.host);
-    this._scanning = false;
+    dialog().closeDialog();
+    // fireEvent(this, "close-dialog");
+    // this._scan_dialog.close();
+    // this._controls.classList.remove("disabled");
   }
 
   private _createItem() {}
@@ -130,6 +145,10 @@ export class HaConfigLCN extends LitElement {
     return [
       haStyle,
       css`
+        .disabled {
+          opacity: 0.3;
+          pointer-events: none;
+        }
         #box {
           display: flex;
           justify-content: space-between;
@@ -138,9 +157,10 @@ export class HaConfigLCN extends LitElement {
           width: 50%;
           display: inline-block;
         }
-        #scan-devices-button {
+        #scan-devices {
           display: inline-block;
           margin-top: 20px;
+          justify-content: center;
         }
       `,
     ];
