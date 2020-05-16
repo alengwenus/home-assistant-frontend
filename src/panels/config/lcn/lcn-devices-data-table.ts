@@ -30,7 +30,7 @@ export class LCNDevicesDataTable extends LitElement {
 
   private _last_opened_items: string[] = []; // unique_ids of opened items
 
-  updated(changedProperties) {
+  protected updated(changedProperties) {
     if (changedProperties.has("devices")) {
       // open all items with stored unique_ids
       for (let item of this._grid.items) {
