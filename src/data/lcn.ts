@@ -1,6 +1,4 @@
-import { HassEntity } from "home-assistant-js-websocket";
 import { HomeAssistant } from "../types";
-import { IntegrationManifest } from "./integration";
 
 export interface LcnHosts {
   name: string;
@@ -23,7 +21,7 @@ export interface LcnEntityConfig {
   unique_id: string;
   platform: string;
   resource: string;
-  platform_data: [SwitchConfig | LightConfig];
+  platform_data: SwitchConfig[] | LightConfig[];
 }
 
 export interface LcnDeviceConfig {
@@ -35,7 +33,7 @@ export interface LcnDeviceConfig {
   hardware_serial: number;
   software_serial: number;
   hardware_type: number;
-  entities: [LcnEntityConfig];
+  entities: LcnEntityConfig[];
 }
 
 export const fetchHosts = (hass: HomeAssistant): Promise<LcnHosts[]> =>

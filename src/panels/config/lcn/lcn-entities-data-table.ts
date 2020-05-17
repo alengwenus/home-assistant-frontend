@@ -1,6 +1,6 @@
 import "@vaadin/vaadin-grid";
 import { GridElement } from "@vaadin/vaadin-grid";
-import "@polymer/paper-icon-button/paper-icon-button";
+import "../../../components/ha-icon-button";
 import { css, customElement, LitElement, property, query } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
@@ -39,7 +39,7 @@ export class LCNEntitiesDataTable extends LitElement {
         ></vaadin-grid-column>
         <vaadin-grid-column
           id="delete-entity-column"
-          width="70px"
+          width="80px"
           text-align="center"
           flex-grow="0"
           .headerRenderer=${this._addEntityRenderer.bind(this)}
@@ -52,10 +52,10 @@ export class LCNEntitiesDataTable extends LitElement {
   private _addEntityRenderer(root, column, rowData) {
     render(
       html`
-        <paper-icon-button
+        <ha-icon-button
           title="Create new entity"
           icon="hass:plus"
-        ></paper-icon-button>
+        ></ha-icon-button>
       `,
       root
     );
@@ -64,10 +64,10 @@ export class LCNEntitiesDataTable extends LitElement {
   private _deleteEntityRenderer(root, column, rowData) {
     render(
       html`
-        <paper-icon-button
+        <ha-icon-button
           title="Delete entity"
           icon="hass:delete"
-        ></paper-icon-button>
+        ></ha-icon-button>
       `,
       root
     );
@@ -77,13 +77,17 @@ export class LCNEntitiesDataTable extends LitElement {
     };
   }
 
-  private async _deleteEntity(item: LcnEntityConfig) {
-    await deleteEntity(this.hass, this.host, item);
+  private _dispatchConfigurationChangedEvent() {
     this.dispatchEvent(
-      new CustomEvent("table-items-changed", {
+      new CustomEvent("lcn-configuration-changed", {
         bubbles: true,
         composed: true,
       })
     );
+  }
+
+  private async _deleteEntity(item: LcnEntityConfig) {
+    await deleteEntity(this.hass, this.host, item);
+    this._dispatchConfigurationChangedEvent();
   }
 }

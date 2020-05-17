@@ -20,11 +20,11 @@ import "../ha-config-section";
 import "../../../layouts/hass-loading-screen";
 import "../../../components/ha-card";
 import "./lcn-devices-data-table";
-import { ScanModulesDialog } from "./lcn-scan-modules-dialog";
+import { ScanModulesDialog } from "./dialogs/lcn-scan-modules-dialog";
 import {
   loadLCNScanModulesDialog,
   showLCNScanModulesDialog,
-} from "./show-dialog-scan-modules";
+} from "./dialogs/show-dialog-scan-modules";
 
 import {
   fetchHosts,
@@ -54,7 +54,7 @@ export class HaConfigLCN extends LitElement {
     this._fetchHosts();
     loadLCNScanModulesDialog();
 
-    this.addEventListener("table-items-changed", async (event) => {
+    this.addEventListener("lcn-configuration-changed", async (event) => {
       this._fetchConfig(this.host);
     });
   }
@@ -96,7 +96,7 @@ export class HaConfigLCN extends LitElement {
 
               <div id="scan-devices">
                 <mwc-button raised @click=${this._scanDevices}
-                  >Scan devices</mwc-button
+                  >Scan modules</mwc-button
                 >
               </div>
             </div>
@@ -109,7 +109,7 @@ export class HaConfigLCN extends LitElement {
             ></lcn-devices-data-table>
           </div>
 
-          <lcn-scan-modules-dialog id="scan-dialog"></lcn-scan-modules-dialog>
+          <!-- <lcn-scan-modules-dialog id="scan-dialog"></lcn-scan-modules-dialog> -->
         </ha-config-section>
       </hass-subpage>
     `;
@@ -138,8 +138,6 @@ export class HaConfigLCN extends LitElement {
     this._device_configs = await scanDevices(this.hass!, this.host);
     dialog()!.closeDialog();
   }
-
-  private _createItem() {}
 
   static get styles(): CSSResult[] {
     return [
