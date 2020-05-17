@@ -12,6 +12,7 @@ import {
 } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
+import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
 import { LcnDeviceConfig, deleteDevice } from "../../../data/lcn";
 import "./lcn-entities-data-table";
 import "../../../resources/mdi-icons";
@@ -183,6 +184,19 @@ export class LCNDevicesDataTable extends LitElement {
   }
 
   private async _deleteDevice(item: LcnDeviceConfig) {
+    if (
+      !(await showConfirmationDialog(this, {
+        title: `Delete
+          ${item.is_group ? "group" : "module"}`,
+        text: html` You are about to delete
+          ${item.is_group ? "group" : "module"} [${item.segment_id},
+          ${item.address_id}] ${item.name ? `(${item.name})` : ""}.<br />
+          Deleting a device will delete all associated entities!`,
+      }))
+    ) {
+      return;
+    }
+
     await deleteDevice(this.hass, this.host, item);
     this.dispatchEvent(
       new CustomEvent("table-items-changed", {
