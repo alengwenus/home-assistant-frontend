@@ -1,6 +1,4 @@
-// import "@polymer/paper-dialog/paper-dialog";
-// import "@polymer/paper-dialog-behavior/paper-dialog-behavior";
-import "../../../components/dialog/ha-paper-dialog";
+import "../../../../components/dialog/ha-paper-dialog";
 import "@polymer/paper-spinner/paper-spinner";
 import {
   css,
@@ -13,15 +11,17 @@ import {
   query,
 } from "lit-element";
 import { html } from "lit-html";
-import { haStyleDialog } from "../../../resources/styles";
+import { haStyleDialog } from "../../../../resources/styles";
+import { HomeAssistant } from "../../../../types";
 
 @customElement("lcn-scan-modules-dialog")
 export class ScanModulesDialog extends LitElement {
+  @property() public hass!: HomeAssistant;
+
   @query("ha-paper-dialog") private _dialog: any;
 
   public async showDialog(params: any): Promise<void> {
     this.open();
-    await this.updateComplete;
   }
 
   public closeDialog() {
@@ -30,13 +30,14 @@ export class ScanModulesDialog extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <ha-paper-dialog modal @close-dialog=${this.closeDialog}>
+      <ha-paper-dialog with-backdrop modal @close-dialog=${this.closeDialog}>
+        <h2>Scanning modules...</h2>
+        <p>
+          Scanning of modules might take up to 30 seconds.<br />
+          This dialog will close automatically.
+        </p>
+
         <div id="dialog-content">
-          <h3>Scanning modules...</h3>
-          <p>
-            Scanning of modules might take up to 30 seconds.<br />
-            This dialog will close automatically.
-          </p>
           <paper-spinner active></paper-spinner>
         </div>
       </ha-paper-dialog>

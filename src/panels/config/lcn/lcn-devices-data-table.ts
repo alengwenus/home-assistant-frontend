@@ -1,6 +1,5 @@
 import "@vaadin/vaadin-grid";
 import { GridElement } from "@vaadin/vaadin-grid";
-import "@polymer/iron-icon";
 import "@polymer/paper-tooltip/paper-tooltip";
 import {
   css,
@@ -15,7 +14,12 @@ import { HomeAssistant } from "../../../types";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
 import { LcnDeviceConfig, deleteDevice } from "../../../data/lcn";
 import "./lcn-entities-data-table";
-import "../../../resources/mdi-icons";
+import "../../../components/ha-icon-button";
+import "../../../components/ha-icon";
+import {
+  loadLCNCreateDeviceDialog,
+  showLCNCreateDeviceDialog,
+} from "./dialogs/show-dialog-create_device";
 
 @customElement("lcn-devices-data-table")
 export class LCNDevicesDataTable extends LitElement {
@@ -30,6 +34,11 @@ export class LCNDevicesDataTable extends LitElement {
   @query("vaadin-grid") private _grid!: GridElement;
 
   private _last_opened_items: string[] = []; // unique_ids of opened items
+
+  protected firstUpdated(changedProperties) {
+    super.firstUpdated(changedProperties);
+    loadLCNCreateDeviceDialog();
+  }
 
   protected updated(changedProperties) {
     if (changedProperties.has("devices")) {
@@ -68,7 +77,7 @@ export class LCNDevicesDataTable extends LitElement {
       >
         <vaadin-grid-column
           id="expand_item-column"
-          width="70px"
+          width="80px"
           flex-grow="0"
           .renderer=${this._expandItemRenderer}
         ></vaadin-grid-column>
@@ -100,7 +109,7 @@ export class LCNDevicesDataTable extends LitElement {
         ></vaadin-grid-column>
         <vaadin-grid-column
           id="delete-device-column"
-          width="70px"
+          width="80px"
           text-align="center"
           flex-grow="0"
           .headerRenderer=${this._addDeviceRenderer.bind(this)}
@@ -144,12 +153,12 @@ export class LCNDevicesDataTable extends LitElement {
   private _expandItemRenderer(root, grid, rowData) {
     render(
       html`
-        <iron-icon
+        <ha-icon
           id="expand-item-icon"
           icon=${rowData.detailsOpened
             ? "mdi:chevron-down"
             : "mdi:chevron-right"}
-        ></iron-icon>
+        ></ha-icon>
       `,
       root
     );
@@ -158,22 +167,26 @@ export class LCNDevicesDataTable extends LitElement {
   private _addDeviceRenderer(root, column, rowData) {
     render(
       html`
-        <paper-icon-button
+        <ha-icon-button
           title="Add new LCN device (module or group)"
           icon="hass:plus"
-        ></paper-icon-button>
+        ></ha-icon-button>
       `,
       root
     );
+    root.firstElementChild.onclick = (event) => {
+      event.stopPropagation();
+      this._addDevice();
+    };
   }
 
   private _deleteDeviceRenderer(root, column, rowData) {
     render(
       html`
-        <paper-icon-button
+        <ha-icon-button
           title="Delete LCN device"
           icon="hass:delete"
-        ></paper-icon-button>
+        ></ha-icon-button>
       `,
       root
     );
@@ -183,27 +196,41 @@ export class LCNDevicesDataTable extends LitElement {
     };
   }
 
+  private _dispatchConfigurationChangedEvent() {
+    this.dispatchEvent(
+      new CustomEvent("lcn-configuration-changed", {
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private async _addDevice() {
+    showLCNCreateDeviceDialog(this, {
+      createDevice: async (values) => {
+        console.log("Create device!");
+        console.log(values);
+        this._dispatchConfigurationChangedEvent();
+      },
+    });
+  }
+
   private async _deleteDevice(item: LcnDeviceConfig) {
     if (
       !(await showConfirmationDialog(this, {
         title: `Delete
           ${item.is_group ? "group" : "module"}`,
-        text: html` You are about to delete
-          ${item.is_group ? "group" : "module"} [${item.segment_id},
-          ${item.address_id}] ${item.name ? `(${item.name})` : ""}.<br />
-          Deleting a device will delete all associated entities!`,
+        text: html` You are about to remove
+          ${item.is_group ? "group" : "module"} ${item.address_id} in segment
+          ${item.segment_id} ${item.name ? `('${item.name}')` : ""}.<br />
+          Removing a device will also delete all associated entities!`,
       }))
     ) {
       return;
     }
 
     await deleteDevice(this.hass, this.host, item);
-    this.dispatchEvent(
-      new CustomEvent("table-items-changed", {
-        bubbles: true,
-        composed: true,
-      })
-    );
+    this._dispatchConfigurationChangedEvent();
   }
 }
 
