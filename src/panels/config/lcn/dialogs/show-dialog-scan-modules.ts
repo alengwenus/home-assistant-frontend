@@ -1,4 +1,4 @@
-import { fireEvent } from "../../../common/dom/fire_event";
+import { fireEvent } from "../../../../common/dom/fire_event";
 import { ScanModulesDialog } from "./lcn-scan-modules-dialog";
 
 const getDialog = () => {
