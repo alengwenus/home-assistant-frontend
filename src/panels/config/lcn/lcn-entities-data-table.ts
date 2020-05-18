@@ -1,7 +1,14 @@
 import "@vaadin/vaadin-grid";
 import { GridElement } from "@vaadin/vaadin-grid";
 import "../../../components/ha-icon-button";
-import { css, customElement, LitElement, property, query } from "lit-element";
+import {
+  css,
+  customElement,
+  LitElement,
+  property,
+  query,
+  CSSResult,
+} from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import {
@@ -24,6 +31,22 @@ export class LCNEntitiesDataTable extends LitElement {
 
   protected render() {
     return html`
+      <dom-module id="entity-grid-theme" theme-for="vaadin-grid">
+        <template>
+          <style>
+            [part~="row"]:hover > [part~="body-cell"] {
+              background-color: rgba(var(--rgb-primary-text-color), 0.04);
+            }
+            [part="row"] {
+              min-height: 40;
+            }
+            /* :host [part~="body-cell"] ::slotted(vaadin-grid-cell-content){
+              cursor: pointer;
+            } */
+          </style>
+        </template>
+      </dom-module>
+
       <vaadin-grid
         height-by-rows
         .items=${this.device ? this.device.entities : []}
@@ -39,8 +62,7 @@ export class LCNEntitiesDataTable extends LitElement {
         ></vaadin-grid-column>
         <vaadin-grid-column
           id="delete-entity-column"
-          width="80px"
-          text-align="center"
+          width="55px"
           flex-grow="0"
           .headerRenderer=${this._addEntityRenderer.bind(this)}
           .renderer=${this._deleteEntityRenderer.bind(this)}
@@ -89,5 +111,13 @@ export class LCNEntitiesDataTable extends LitElement {
   private async _deleteEntity(item: LcnEntityConfig) {
     await deleteEntity(this.hass, this.host, item);
     this._dispatchConfigurationChangedEvent();
+  }
+
+  static get styles(): CSSResult {
+    return css`
+      ha-icon-button {
+        --mdc-icon-button-size: 40px;
+      }
+    `;
   }
 }
