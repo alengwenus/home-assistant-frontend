@@ -31,23 +31,8 @@ export class LCNEntitiesDataTable extends LitElement {
 
   protected render() {
     return html`
-      <dom-module id="entity-grid-theme" theme-for="vaadin-grid">
-        <template>
-          <style>
-            [part~="row"]:hover > [part~="body-cell"] {
-              background-color: rgba(var(--rgb-primary-text-color), 0.04);
-            }
-            [part="row"] {
-              min-height: 40;
-            }
-            /* :host [part~="body-cell"] ::slotted(vaadin-grid-cell-content){
-              cursor: pointer;
-            } */
-          </style>
-        </template>
-      </dom-module>
-
       <vaadin-grid
+        class="lcn-table"
         height-by-rows
         .items=${this.device ? this.device.entities : []}
       >
