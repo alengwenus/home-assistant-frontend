@@ -15,7 +15,6 @@ import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box
 import { LcnDeviceConfig, deleteDevice } from "../../../data/lcn";
 import "./lcn-entities-data-table";
 import "../../../components/ha-icon-button";
-import "../../../components/ha-icon";
 import {
   loadLCNCreateDeviceDialog,
   showLCNCreateDeviceDialog,
@@ -53,11 +52,14 @@ export class LCNDevicesDataTable extends LitElement {
 
   protected render() {
     return html`
-      <dom-module id="lcn-grid" theme-for="vaadin-grid">
+      <dom-module id="device-grid-theme" theme-for="vaadin-grid">
         <template>
           <style>
-            :host [part~="row"]:hover [part~="body-cell"] {
+            [part~="row"]:hover > [part~="body-cell"] {
               background-color: rgba(var(--rgb-primary-text-color), 0.04);
+            }
+            [part="row"] {
+              min-height: 40;
             }
             /* :host [part~="body-cell"] ::slotted(vaadin-grid-cell-content){
               cursor: pointer;
@@ -106,11 +108,11 @@ export class LCNDevicesDataTable extends LitElement {
           id="name-column"
           path="name"
           header="Name"
+          flex-grow="1"
         ></vaadin-grid-column>
         <vaadin-grid-column
           id="delete-device-column"
-          width="80px"
-          text-align="center"
+          width="55px"
           flex-grow="0"
           .headerRenderer=${this._addDeviceRenderer.bind(this)}
           .renderer=${this._deleteDeviceRenderer.bind(this)}
@@ -231,6 +233,14 @@ export class LCNDevicesDataTable extends LitElement {
 
     await deleteDevice(this.hass, this.host, item);
     this._dispatchConfigurationChangedEvent();
+  }
+
+  static get styles(): CSSResult {
+    return css`
+      ha-icon-button {
+        --mdc-icon-button-size: 40px;
+      }
+    `;
   }
 }
 
