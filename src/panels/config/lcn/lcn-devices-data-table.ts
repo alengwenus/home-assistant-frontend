@@ -52,23 +52,21 @@ export class LCNDevicesDataTable extends LitElement {
 
   protected render() {
     return html`
-      <dom-module id="device-grid-theme" theme-for="vaadin-grid">
+      <dom-module id="grid-custom-theme" theme-for="vaadin-grid">
         <template>
           <style>
-            [part~="row"]:hover > [part~="body-cell"] {
+            :host(.lcn-table) [part~="row"]:hover > [part~="body-cell"] {
               background-color: rgba(var(--rgb-primary-text-color), 0.04);
             }
-            [part="row"] {
+            :host(.lcn-table) [part="row"] {
               min-height: 40;
             }
-            /* :host [part~="body-cell"] ::slotted(vaadin-grid-cell-content){
-              cursor: pointer;
-            } */
           </style>
         </template>
       </dom-module>
 
       <vaadin-grid
+        class="lcn-table"
         height-by-rows
         multi-sort
         .items=${this.devices}
