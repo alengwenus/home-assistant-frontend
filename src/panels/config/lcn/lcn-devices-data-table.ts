@@ -13,6 +13,7 @@ import {
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
+import { navigate } from "../../../common/navigate";
 import { LcnDeviceConfig, deleteDevice } from "../../../data/lcn";
 import "./lcn-entities-data-table";
 import "../../../components/ha-icon-button";
@@ -33,22 +34,9 @@ export class LCNDevicesDataTable extends LitElement {
 
   @query("vaadin-grid") private _grid!: GridElement;
 
-  private _last_opened_items: string[] = []; // unique_ids of opened items
-
   protected firstUpdated(changedProperties) {
     super.firstUpdated(changedProperties);
     loadLCNCreateDeviceDialog();
-  }
-
-  protected updated(changedProperties: PropertyValues) {
-    if (changedProperties.has("devices")) {
-      // open all items with stored unique_ids
-      for (let item of this._grid.items) {
-        if (this._last_opened_items.includes(item.unique_id)) {
-          this._grid.openItemDetails(item);
-        }
-      }
-    }
   }
 
   protected render() {
@@ -71,7 +59,6 @@ export class LCNDevicesDataTable extends LitElement {
         height-by-rows
         multi-sort
         .items=${this.devices}
-        .rowDetailsRenderer=${this._rowDetailsRenderer.bind(this)}
         @click="${(event) => {
           this._gridItemClicked(event);
         }}"
@@ -125,41 +112,15 @@ export class LCNDevicesDataTable extends LitElement {
     const item = context.item;
     // open/close item details for clicked items and store/remove unique_id
     if (context.section == "body") {
-      if (this._last_opened_items.includes(item.unique_id)) {
-        this._grid.closeItemDetails(item);
-        this._last_opened_items = this._last_opened_items.filter(
-          (e) => e !== item.unique_id
-        );
-      } else {
-        this._grid.openItemDetails(item);
-        this._last_opened_items.push(item.unique_id);
-      }
+      navigate(this, `/config/lcn/device/${item.unique_id}`);
       this._grid.notifyResize();
     }
-  }
-
-  private _rowDetailsRenderer(root, grid, rowData) {
-    render(
-      html`
-        <lcn-entities-data-table
-          .hass=${this.hass}
-          .host=${this.host}
-          .device=${<LcnDeviceConfig>rowData.item}
-        ></lcn-entities-data-table>
-      `,
-      root
-    );
   }
 
   private _expandItemRenderer(root, grid, rowData) {
     render(
       html`
-        <ha-icon
-          id="expand-item-icon"
-          icon=${rowData.detailsOpened
-            ? "mdi:chevron-down"
-            : "mdi:chevron-right"}
-        ></ha-icon>
+        <ha-icon id="expand-item-icon" icon="mdi:chevron-right"></ha-icon>
       `,
       root
     );

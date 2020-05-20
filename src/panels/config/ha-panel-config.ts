@@ -298,10 +298,10 @@ class HaPanelConfig extends HassRouterPage {
         load: () => import("./zone/ha-config-zone"),
       },
       lcn: {
-        tag: "ha-config-lcn",
+        tag: "lcn-config-dashboard-router",
         load: () =>
           import(
-            /* webpackChunkName: "panel-config-lcn" */ "./lcn/ha-config-lcn"
+            /* webpackChunkName: "panel-config-lcn" */ "./lcn/lcn-config-dashboard-router"
           ),
       },
       zha: {
