@@ -8,6 +8,7 @@ import {
   LitElement,
   property,
   query,
+  PropertyValues,
 } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
@@ -39,7 +40,7 @@ export class LCNDevicesDataTable extends LitElement {
     loadLCNCreateDeviceDialog();
   }
 
-  protected updated(changedProperties) {
+  protected updated(changedProperties: PropertyValues) {
     if (changedProperties.has("devices")) {
       // open all items with stored unique_ids
       for (let item of this._grid.items) {
