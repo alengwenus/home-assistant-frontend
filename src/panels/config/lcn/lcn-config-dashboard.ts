@@ -35,8 +35,8 @@ import {
 } from "../../../data/lcn";
 import { haStyle } from "../../../resources/styles";
 
-@customElement("ha-config-lcn")
-export class HaConfigLCN extends LitElement {
+@customElement("lcn-config-dashboard")
+export class LCNConfigDashboard extends LitElement {
   @property() public hass!: HomeAssistant;
 
   @property() public isWide?: boolean;
@@ -167,6 +167,6 @@ export class HaConfigLCN extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "ha-config-lcn": HaConfigLCN;
+    "lcn-config-dashboard": LCNConfigDashboard;
   }
 }
