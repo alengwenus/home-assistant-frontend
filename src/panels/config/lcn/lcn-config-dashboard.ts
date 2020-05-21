@@ -28,7 +28,7 @@ import {
 
 import {
   fetchHosts,
-  fetchConfig,
+  fetchDevices,
   scanDevices,
   LcnHosts,
   LcnDeviceConfig,
@@ -55,7 +55,7 @@ export class LCNConfigDashboard extends LitElement {
     loadLCNScanModulesDialog();
 
     this.addEventListener("lcn-configuration-changed", async (event) => {
-      this._fetchConfig(this.host);
+      this._fetchDevices(this.host);
     });
   }
 
@@ -120,15 +120,15 @@ export class LCNConfigDashboard extends LitElement {
       return;
     }
     this.host = ev.detail.value.itemValue;
-    this._fetchConfig(this.host);
+    this._fetchDevices(this.host);
   }
 
   private async _fetchHosts() {
     this._hosts = await fetchHosts(this.hass!);
   }
 
-  private async _fetchConfig(host: string) {
-    this._device_configs = await fetchConfig(this.hass!, host);
+  private async _fetchDevices(host: string) {
+    this._device_configs = await fetchDevices(this.hass!, host);
   }
 
   private async _scanDevices(host: string) {
