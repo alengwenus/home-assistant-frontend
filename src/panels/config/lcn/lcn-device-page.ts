@@ -11,7 +11,12 @@ import {
 import { html } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import "../../../layouts/hass-subpage";
-import { fetchConfig, LcnDeviceConfig } from "../../../data/lcn";
+import {
+  fetchEntities,
+  fetchDevices,
+  LcnDeviceConfig,
+  LcnEntityConfig,
+} from "../../../data/lcn";
 
 @customElement("lcn-device-page")
 export class LCNDevicePage extends LitElement {
@@ -21,24 +26,26 @@ export class LCNDevicePage extends LitElement {
 
   @property() public narrow?: boolean;
 
-  @property() public unique_device_id?: string;
+  @property() public unique_device_id!: string;
 
   @property() public host!: string;
 
-  @property() private _device_configs: LcnDeviceConfig[] = [];
+  // @property() private _device_configs: LcnDeviceConfig[] = [];
 
   @property() private _device_config!: LcnDeviceConfig;
+
+  @property() private _entity_configs: LcnEntityConfig[] = [];
 
   protected firstUpdated(changedProperties) {
     super.firstUpdated(changedProperties);
     this.addEventListener("lcn-configuration-changed", async (event) => {
-      this._fetchConfig(this.host);
+      this._fetchEntities(this.host, this.unique_device_id);
     });
   }
 
   protected updated(changedProperties: PropertyValues): void {
     if (changedProperties.has("host")) {
-      this._fetchConfig(this.host);
+      this._fetchEntities(this.host, this.unique_device_id);
     }
     super.update(changedProperties);
   }
@@ -61,19 +68,27 @@ export class LCNDevicePage extends LitElement {
           <lcn-entities-data-table
             .hass=${this.hass}
             .host=${this.host}
-            .device=${this._device_config}
+            .entities=${this._entity_configs}
           ></lcn-entities-data-table>
         </ha-config-section>
       </hass-subpage>
     `;
   }
 
-  private async _fetchConfig(host: string) {
+  private async _fetchEntities(host: string, unique_device_id: string) {
     console.log(this.hass);
-    this._device_configs = await fetchConfig(this.hass!, host);
-    this._device_config = this._device_configs.find(
-      (device) => device.unique_id == this.unique_device_id
+    const device_configs: LcnDeviceConfig[] = await fetchDevices(
+      this.hass!,
+      host
+    );
+    this._device_config = device_configs.find(
+      (device_config) => device_config.unique_id == unique_device_id
     )!;
+    this._entity_configs = await fetchEntities(
+      this.hass!,
+      host,
+      unique_device_id
+    );
   }
 }
 

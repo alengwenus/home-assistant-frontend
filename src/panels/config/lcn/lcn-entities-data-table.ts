@@ -11,11 +11,7 @@ import {
 } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
-import {
-  LcnDeviceConfig,
-  LcnEntityConfig,
-  deleteEntity,
-} from "../../../data/lcn";
+import { LcnEntityConfig, deleteEntity } from "../../../data/lcn";
 
 @customElement("lcn-entities-data-table")
 export class LCNEntitiesDataTable extends LitElement {
@@ -25,17 +21,13 @@ export class LCNEntitiesDataTable extends LitElement {
 
   @property() public host: string = "";
 
-  @property() public device?: LcnDeviceConfig;
+  @property() public entities: LcnEntityConfig[] = [];
 
   @query("vaadin-grid") private _grid!: GridElement;
 
   protected render() {
     return html`
-      <vaadin-grid
-        class="lcn-table"
-        height-by-rows
-        .items=${this.device ? this.device.entities : []}
-      >
+      <vaadin-grid class="lcn-table" height-by-rows .items=${this.entities}>
         <vaadin-grid-column path="name" header="Name"></vaadin-grid-column>
         <vaadin-grid-column
           path="platform"
