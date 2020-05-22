@@ -14,7 +14,7 @@ import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
 import { navigate } from "../../../common/navigate";
-import { LcnDeviceConfig, deleteDevice } from "../../../data/lcn";
+import { LcnDeviceConfig, addDevice, deleteDevice } from "../../../data/lcn";
 import "./lcn-entities-data-table";
 import "../../../components/ha-icon-button";
 import {
@@ -160,7 +160,7 @@ export class LCNDevicesDataTable extends LitElement {
 
   private _dispatchConfigurationChangedEvent() {
     this.dispatchEvent(
-      new CustomEvent("lcn-configuration-changed", {
+      new CustomEvent("lcn-config-changed", {
         bubbles: true,
         composed: true,
       })
@@ -169,9 +169,8 @@ export class LCNDevicesDataTable extends LitElement {
 
   private async _addDevice() {
     showLCNCreateDeviceDialog(this, {
-      createDevice: async (values) => {
-        console.log("Create device!");
-        console.log(values);
+      createDevice: async (device_params) => {
+        await addDevice(this.hass, this.host, device_params);
         this._dispatchConfigurationChangedEvent();
       },
     });
