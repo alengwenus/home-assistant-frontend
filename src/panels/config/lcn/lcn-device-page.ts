@@ -13,7 +13,7 @@ import { HomeAssistant } from "../../../types";
 import "../../../layouts/hass-subpage";
 import {
   fetchEntities,
-  fetchDevices,
+  fetchDevice,
   LcnDeviceConfig,
   LcnEntityConfig,
 } from "../../../data/lcn";
@@ -77,13 +77,8 @@ export class LCNDevicePage extends LitElement {
 
   private async _fetchEntities(host: string, unique_device_id: string) {
     console.log(this.hass);
-    const device_configs: LcnDeviceConfig[] = await fetchDevices(
-      this.hass!,
-      host
-    );
-    this._device_config = device_configs.find(
-      (device_config) => device_config.unique_id == unique_device_id
-    )!;
+    this._device_config = await fetchDevice(this.hass!, host, unique_device_id);
+
     this._entity_configs = await fetchEntities(
       this.hass!,
       host,

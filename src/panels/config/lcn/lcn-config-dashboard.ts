@@ -54,7 +54,7 @@ export class LCNConfigDashboard extends LitElement {
     this._fetchHosts();
     loadLCNScanModulesDialog();
 
-    this.addEventListener("lcn-configuration-changed", async (event) => {
+    this.addEventListener("lcn-config-changed", async (event) => {
       this._fetchDevices(this.host);
     });
   }
