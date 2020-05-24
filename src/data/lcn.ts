@@ -96,7 +96,7 @@ export const addDevice = (
   hass: HomeAssistant,
   host: string,
   device: Partial<LcnDeviceConfig>
-): Promise<void> =>
+): Promise<boolean> =>
   hass.callWS({
     type: "lcn/device/add",
     host: host,
