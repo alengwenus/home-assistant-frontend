@@ -8,10 +8,15 @@ import {
   property,
   query,
   CSSResult,
+  PropertyValues,
 } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import { LcnEntityConfig, deleteEntity } from "../../../data/lcn";
+import {
+  loadLCNCreateEntityDialog,
+  showLCNCreateEntityDialog,
+} from "./dialogs/show-dialog-create-entity";
 
 @customElement("lcn-entities-data-table")
 export class LCNEntitiesDataTable extends LitElement {
@@ -24,6 +29,15 @@ export class LCNEntitiesDataTable extends LitElement {
   @property() public entities: LcnEntityConfig[] = [];
 
   @query("vaadin-grid") private _grid!: GridElement;
+
+  protected firstUpdated(changedProperties) {
+    super.firstUpdated(changedProperties);
+    loadLCNCreateEntityDialog();
+  }
+
+  protected update(changedProperties) {
+    super.update(changedProperties);
+  }
 
   protected render() {
     return html`
@@ -58,6 +72,10 @@ export class LCNEntitiesDataTable extends LitElement {
       `,
       root
     );
+    root.firstElementChild.onclick = (event) => {
+      event.stopPropagation();
+      this._addEntity();
+    };
   }
 
   private _deleteEntityRenderer(root, column, rowData) {
@@ -85,6 +103,15 @@ export class LCNEntitiesDataTable extends LitElement {
     );
   }
 
+  private async _addEntity() {
+    showLCNCreateEntityDialog(this, {
+      createEntity: async (entity_params) => {
+        console.log(entity_params.name);
+        this._dispatchConfigurationChangedEvent();
+      },
+    });
+  }
+
   private async _deleteEntity(item: LcnEntityConfig) {
     await deleteEntity(this.hass, this.host, item);
     this._dispatchConfigurationChangedEvent();
@@ -96,5 +123,11 @@ export class LCNEntitiesDataTable extends LitElement {
         --mdc-icon-button-size: 40px;
       }
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "lcn-entities-data-table": LCNEntitiesDataTable;
   }
 }

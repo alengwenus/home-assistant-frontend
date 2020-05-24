@@ -19,28 +19,24 @@ import { html } from "lit-html";
 import { PolymerChangedEvent } from "../../../../polymer-types";
 import { haStyleDialog } from "../../../../resources/styles";
 import { HomeAssistant } from "../../../../types";
-import { LcnDeviceDialogParams } from "./show-dialog-create-device";
-import { LcnDeviceConfig } from "../../../../data/lcn";
+import { LcnEntityDialogParams } from "./show-dialog-create-entity";
+import { LcnEntityConfig } from "../../../../data/lcn";
 
-@customElement("lcn-create-device-dialog")
-export class CreateDeviceDialog extends LitElement {
+@customElement("lcn-create-entity-dialog")
+export class CreateEntityDialog extends LitElement {
   @property() public hass!: HomeAssistant;
 
-  @property() private _params?: LcnDeviceDialogParams;
+  @property() private _params?: LcnEntityDialogParams;
 
   @property() private _name: string = "";
 
-  @property() private _isGroup: boolean = false;
-
-  @property() private _segmentId: number = 0;
-
-  @property() private _addressId: number = 5;
+  @property() private _platform: string = "switch";
 
   @property() private _invalid: boolean = false;
 
   @queryAll("paper-input") private _inputs: any;
 
-  public async showDialog(params: LcnDeviceDialogParams): Promise<void> {
+  public async showDialog(params: LcnEntityDialogParams): Promise<void> {
     this._params = params;
     await this.updateComplete;
   }
@@ -69,49 +65,19 @@ export class CreateDeviceDialog extends LitElement {
             dialog-dismiss
           ></ha-icon-button>
           <div class="main-title" main-title>
-            Create new module / group
+            Create new entity
           </div>
         </app-toolbar>
 
         <form>
-          <label>Type:</label>
-          <paper-radio-group
-            name="is_group"
-            selected="module"
-            @selected-changed=${this._handleIsGroupChanged}
-          >
-            <paper-radio-button name="module">Module</paper-radio-button>
-            <paper-radio-button name="group">Group</paper-radio-button>
-          </paper-radio-group>
-          <paper-input
-            label="Segment ID"
-            type="number"
-            value="0"
-            min="0"
-            @value-changed=${(event) => (this._segmentId = +event.detail.value)}
-            .invalid=${this._validateSegmentId(this._segmentId)}
-            error-message="Segment ID must be 0, 5..128."
-          >
-          </paper-input>
-          <paper-input
-            label="ID"
-            type="number"
-            value="5"
-            min="0"
-            @value-changed=${(event) => (this._addressId = +event.detail.value)}
-            .invalid=${this._validateAddressId(this._addressId, this._isGroup)}
-            error-message=${this._isGroup
-              ? "Group ID must be 3..254."
-              : "Module ID must be 5..254"}
-          >
-          </paper-input>
           <paper-input
             label="Name"
-            placeholder=${this._isGroup ? "Group" : "Module"}
+            placeholder=${this._platform}
             max-length="20"
             @value-changed=${(event) => (this._name = event.detail.value)}
           >
           </paper-input>
+          <label>Platform:</label>
         </form>
 
         <div class="buttons">
@@ -132,33 +98,11 @@ export class CreateDeviceDialog extends LitElement {
     }
   }
 
-  private _handleIsGroupChanged(ev: CustomEvent): void {
-    this._isGroup = ev.detail.value == "group";
-  }
-
-  private _validateSegmentId(segment_id: number): boolean {
-    // segement_id: 0, 5-128
-    return !(segment_id === 0 || (5 <= segment_id && segment_id <= 128));
-  }
-
-  private _validateAddressId(address_id: number, is_group: boolean): boolean {
-    // module_id: 5-254
-    // group_id: 3-254
-    if (is_group) {
-      return !(3 <= address_id && address_id <= 254);
-    } else {
-      return !(5 <= address_id && address_id <= 254);
-    }
-  }
-
   private async _create(): Promise<void> {
-    const values: Partial<LcnDeviceConfig> = {
-      name: this._name ? this._name : this._isGroup ? "Group" : "Module",
-      segment_id: this._segmentId,
-      address_id: this._addressId,
-      is_group: this._isGroup,
+    const values: Partial<LcnEntityConfig> = {
+      name: this._name ? this._name : this._platform,
     };
-    await this._params!.createDevice(values);
+    await this._params!.createEntity(values);
     this._closeDialog();
   }
 
@@ -249,6 +193,6 @@ export class CreateDeviceDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lcn-create-device-dialog": CreateDeviceDialog;
+    "lcn-create-entity-dialog": CreateEntityDialog;
   }
 }

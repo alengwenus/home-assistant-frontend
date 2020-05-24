@@ -23,7 +23,7 @@ import "../../../components/ha-icon-button";
 import {
   loadLCNCreateDeviceDialog,
   showLCNCreateDeviceDialog,
-} from "./dialogs/show-dialog-create_device";
+} from "./dialogs/show-dialog-create-device";
 
 @customElement("lcn-devices-data-table")
 export class LCNDevicesDataTable extends LitElement {
