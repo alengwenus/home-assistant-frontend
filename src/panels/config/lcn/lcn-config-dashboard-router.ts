@@ -16,6 +16,7 @@ class LCNConfigDashboardRouter extends HassRouterPage {
   protected routerOptions: RouterOptions = {
     defaultPage: "devices",
     showLoading: true,
+    preloadAll: true,
     routes: {
       devices: {
         tag: "lcn-config-dashboard",
@@ -28,7 +29,7 @@ class LCNConfigDashboardRouter extends HassRouterPage {
         tag: "lcn-device-page",
         load: () =>
           import(
-            /* webpackChunkName: "zha-devices-page" */ "./lcn-device-page"
+            /* webpackChunkName: "lcn-devices-page" */ "./lcn-device-page"
           ),
       },
     },

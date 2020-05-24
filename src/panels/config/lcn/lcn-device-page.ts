@@ -11,6 +11,9 @@ import {
 import { html } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import "../../../layouts/hass-subpage";
+import "../ha-config-section";
+import "../../../layouts/hass-loading-screen";
+import "../../../components/ha-card";
 import {
   fetchEntities,
   fetchDevice,
@@ -51,10 +54,9 @@ export class LCNDevicePage extends LitElement {
   }
 
   protected render(): TemplateResult {
-    if (!this._device_config) {
+    if (!this._device_config && this._entity_configs.length == 0) {
       return html` <hass-loading-screen></hass-loading-screen> `;
     }
-
     return html`
       <hass-subpage
         .header=${html`
@@ -69,6 +71,7 @@ export class LCNDevicePage extends LitElement {
             .hass=${this.hass}
             .host=${this.host}
             .entities=${this._entity_configs}
+            .narrow=${this.narrow}
           ></lcn-entities-data-table>
         </ha-config-section>
       </hass-subpage>
@@ -76,9 +79,7 @@ export class LCNDevicePage extends LitElement {
   }
 
   private async _fetchEntities(host: string, unique_device_id: string) {
-    console.log(this.hass);
     this._device_config = await fetchDevice(this.hass!, host, unique_device_id);
-
     this._entity_configs = await fetchEntities(
       this.hass!,
       host,
