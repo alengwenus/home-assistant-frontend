@@ -114,9 +114,6 @@ export class CreateDeviceDialog extends LitElement {
           </paper-input>
         </form>
 
-        <p>
-          Now we will create a new device.
-        </p>
         <div class="buttons">
           <mwc-button @click="${this._closeDialog}">
             Dismiss
