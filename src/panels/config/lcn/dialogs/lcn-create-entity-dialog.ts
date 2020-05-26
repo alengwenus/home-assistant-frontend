@@ -21,6 +21,7 @@ import { haStyleDialog } from "../../../../resources/styles";
 import { HomeAssistant } from "../../../../types";
 import { LcnEntityDialogParams } from "./show-dialog-create-entity";
 import { LcnEntityConfig } from "../../../../data/lcn";
+import "./lcn-platform-switch";
 
 @customElement("lcn-create-entity-dialog")
 export class CreateEntityDialog extends LitElement {
@@ -30,22 +31,26 @@ export class CreateEntityDialog extends LitElement {
 
   @property() private _name: string = "";
 
-  @property() private _platform: string = "switch";
+  @property() public platform: string = "switch";
 
   @property() private _invalid: boolean = false;
 
-  @queryAll("paper-input") private _inputs: any;
+  @query("#platform") private _platform_element;
+
+  // @queryAll("paper-input") private _inputs: any;
+
+  private _platforms: string[] = ["switch", "light"];
 
   public async showDialog(params: LcnEntityDialogParams): Promise<void> {
     this._params = params;
     await this.updateComplete;
   }
 
-  protected update(changedProperties: PropertyValues) {
-    super.update(changedProperties);
-    const isInvalid = (inp) => inp.invalid;
-    this._invalid = Array.from(this._inputs).some(isInvalid);
-  }
+  // protected update(changedProperties: PropertyValues) {
+  //   super.update(changedProperties);
+  //   const isInvalid = (inp) => inp.invalid;
+  //   this._invalid = Array.from(this._inputs).some(isInvalid);
+  // }
 
   protected render(): TemplateResult {
     if (!this._params) {
@@ -72,12 +77,24 @@ export class CreateEntityDialog extends LitElement {
         <form>
           <paper-input
             label="Name"
-            placeholder=${this._platform}
+            placeholder=${this.platform}
             max-length="20"
             @value-changed=${(event) => (this._name = event.detail.value)}
           >
           </paper-input>
-          <label>Platform:</label>
+          <paper-dropdown-menu
+            label="Platform"
+            @selected-item-changed=${this._platform_changed}
+          >
+            <paper-listbox slot="dropdown-content" selected="0">
+              ${this._platforms.map((platform) => {
+                return html`
+                  <paper-item .itemValue=${platform}>${platform} </paper-item>
+                `;
+              })}
+            </paper-listbox>
+          </paper-dropdown-menu>
+          ${this.renderPlatform(this.platform)}
         </form>
 
         <div class="buttons">
@@ -92,6 +109,14 @@ export class CreateEntityDialog extends LitElement {
     `;
   }
 
+  private renderPlatform(platform) {
+    if (platform == "switch") {
+      return html`<lcn-platform-switch id="platform"></lcn-platform-switch>`;
+    } else {
+      return html``;
+    }
+  }
+
   private _openedChanged(ev: PolymerChangedEvent<boolean>): void {
     if (!(ev.detail as any).value) {
       this._closeDialog();
@@ -99,8 +124,12 @@ export class CreateEntityDialog extends LitElement {
   }
 
   private async _create(): Promise<void> {
+    console.log(this._platform_element.platform_data);
+
     const values: Partial<LcnEntityConfig> = {
-      name: this._name ? this._name : this._platform,
+      name: this._name ? this._name : this.platform,
+      platform: this.platform,
+      platform_data: this._platform_element.platform_data,
     };
     await this._params!.createEntity(values);
     this._closeDialog();
@@ -108,6 +137,13 @@ export class CreateEntityDialog extends LitElement {
 
   private _closeDialog(): void {
     this._params = undefined;
+  }
+
+  private _platform_changed(ev: CustomEvent) {
+    if (!ev.detail.value) {
+      return;
+    }
+    this.platform = ev.detail.value.itemValue;
   }
 
   static get styles(): CSSResult[] {
