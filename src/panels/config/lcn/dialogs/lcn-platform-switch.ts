@@ -16,6 +16,11 @@ import {
 import { html } from "lit-html";
 import { SwitchConfig } from "../../../../data/lcn";
 
+interface Port {
+  name: string;
+  value: string;
+}
+
 @customElement("lcn-platform-switch")
 export class LCNPlatformSwitch extends LitElement {
   @property() public platform_data: SwitchConfig = { output: "OUTPUT1" };
@@ -24,17 +29,24 @@ export class LCNPlatformSwitch extends LitElement {
 
   @query("#ports-listbox") private portsListBox;
 
-  private output_ports: string[] = ["OUTPUT1", "OUTPUT2", "OUTPUT3", "OUTPUT4"];
-  private relay_ports: string[] = [
-    "RELAY1",
-    "RELAY2",
-    "RELAY3",
-    "RELAY4",
-    "RELAY5",
-    "RELAY6",
-    "RELAY7",
-    "RELAY8",
+  private output_ports: Port[] = [
+    { name: "Output 1", value: "OUTPUT1" },
+    { name: "Output 2", value: "OUTPUT2" },
+    { name: "Output 3", value: "OUTPUT3" },
+    { name: "Output 4", value: "OUTPUT4" },
   ];
+
+  private relay_ports: Port[] = [
+    { name: "Relay 1", value: "RELAY1" },
+    { name: "Relay 2", value: "RELAY2" },
+    { name: "Relay 3", value: "RELAY3" },
+    { name: "Relay 4", value: "RELAY4" },
+    { name: "Relay 5", value: "RELAY5" },
+    { name: "Relay 6", value: "RELAY6" },
+    { name: "Relay 7", value: "RELAY7" },
+    { name: "Relay 8", value: "RELAY8" },
+  ];
+
   private ports = { output: this.output_ports, relay: this.relay_ports };
 
   protected render(): TemplateResult {
@@ -52,7 +64,7 @@ export class LCNPlatformSwitch extends LitElement {
         <paper-dropdown-menu
           label="Port"
           @selected-item-changed=${this._portChanged}
-          .value=${this.ports[this.portType][0]}
+          .value=${this.ports[this.portType][0].name}
         >
           <paper-listbox
             id="ports-listbox"
@@ -61,7 +73,7 @@ export class LCNPlatformSwitch extends LitElement {
           >
             ${this.ports[this.portType].map((port) => {
               return html`
-                <paper-item .itemValue=${port}>${port}</paper-item>
+                <paper-item .itemValue=${port.value}>${port.name}</paper-item>
               `;
             })}
         </paper-dropdown-menu>
