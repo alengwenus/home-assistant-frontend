@@ -12,7 +12,12 @@ import {
 } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
-import { LcnEntityConfig, deleteEntity } from "../../../data/lcn";
+import {
+  LcnEntityConfig,
+  addEntity,
+  deleteEntity,
+  LcnDeviceConfig,
+} from "../../../data/lcn";
 import {
   loadLCNCreateEntityDialog,
   showLCNCreateEntityDialog,
@@ -25,6 +30,8 @@ export class LCNEntitiesDataTable extends LitElement {
   @property() public narrow: boolean = false;
 
   @property() public host: string = "";
+
+  @property() public device!: LcnDeviceConfig;
 
   @property() public entities: LcnEntityConfig[] = [];
 
@@ -105,8 +112,9 @@ export class LCNEntitiesDataTable extends LitElement {
 
   private async _addEntity() {
     showLCNCreateEntityDialog(this, {
+      device: <LcnDeviceConfig>this.device,
       createEntity: async (entity_params) => {
-        console.log(entity_params.name);
+        await addEntity(this.hass, this.host, entity_params);
         this._dispatchConfigurationChangedEvent();
       },
     });
