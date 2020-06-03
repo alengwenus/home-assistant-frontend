@@ -3,6 +3,7 @@ import "@polymer/paper-dropdown-menu/paper-dropdown-menu";
 import "@polymer/paper-item/paper-item";
 import "@polymer/paper-listbox/paper-listbox";
 import "@polymer/paper-spinner/paper-spinner";
+import "@material/mwc-fab";
 import {
   css,
   customElement,
@@ -15,25 +16,33 @@ import {
 } from "lit-element";
 import { html } from "lit-html";
 import { HomeAssistant } from "../../../types";
+import { computeRTL } from "../../../common/util/compute_rtl";
+import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
 import "../../../layouts/hass-subpage";
 import "../ha-config-section";
 import "../../../layouts/hass-loading-screen";
 import "../../../components/ha-card";
 import "./lcn-devices-data-table";
+import "../../../components/ha-svg-icon";
+import { haStyle } from "../../../resources/styles";
+import { mdiPlus } from "@mdi/js";
 import { ScanModulesDialog } from "./dialogs/lcn-scan-modules-dialog";
 import {
   loadLCNScanModulesDialog,
   showLCNScanModulesDialog,
 } from "./dialogs/show-dialog-scan-modules";
-
+import {
+  loadLCNCreateDeviceDialog,
+  showLCNCreateDeviceDialog,
+} from "./dialogs/show-dialog-create-device";
 import {
   fetchHosts,
   fetchDevices,
   scanDevices,
+  addDevice,
   LcnHosts,
   LcnDeviceConfig,
 } from "../../../data/lcn";
-import { haStyle } from "../../../resources/styles";
 
 @customElement("lcn-config-dashboard")
 export class LCNConfigDashboard extends LitElement {
@@ -53,6 +62,7 @@ export class LCNConfigDashboard extends LitElement {
     super.firstUpdated(changedProperties);
     this._fetchHosts();
     loadLCNScanModulesDialog();
+    loadLCNCreateDeviceDialog();
 
     this.addEventListener("lcn-config-changed", async (event) => {
       this._fetchDevices(this.host);
@@ -109,7 +119,16 @@ export class LCNConfigDashboard extends LitElement {
             ></lcn-devices-data-table>
           </div>
 
-          <!-- <lcn-scan-modules-dialog id="scan-dialog"></lcn-scan-modules-dialog> -->
+          <mwc-fab
+            aria-label="Create new module/group"
+            title="Create new module/group"
+            @click=${this._addDevice}
+            ?is-wide=${this.isWide}
+            ?narrow=${this.narrow}
+            ?rtl=${computeRTL(this.hass!)}
+          >
+            <ha-svg-icon slot="icon" path=${mdiPlus}></ha-svg-icon>
+          </mwc-fab>
         </ha-config-section>
       </hass-subpage>
     `;
@@ -139,6 +158,26 @@ export class LCNConfigDashboard extends LitElement {
     dialog()!.closeDialog();
   }
 
+  private _addDevice() {
+    showLCNCreateDeviceDialog(this, {
+      createDevice: async (device_params) => {
+        if (!(await addDevice(this.hass, this.host, device_params))) {
+          await showAlertDialog(this, {
+            title: "Device already exists",
+            text: `The specified
+                  ${device_params.is_group ? "group" : "module"}
+                  with address ${device_params.address_id}
+                  in segment ${device_params.segment_id}
+                  already exists.
+                  Devices have to be unique.`,
+          });
+          return;
+        }
+        this._fetchDevices(this.host);
+      },
+    });
+  }
+
   static get styles(): CSSResult[] {
     return [
       haStyle,
@@ -159,6 +198,31 @@ export class LCNConfigDashboard extends LitElement {
           display: inline-block;
           margin-top: 20px;
           justify-content: center;
+        }
+
+        mwc-fab {
+          position: fixed;
+          bottom: 16px;
+          right: 16px;
+          z-index: 1;
+        }
+
+        mwc-fab[is-wide] {
+          bottom: 24px;
+          right: 24px;
+        }
+        mwc-fab[narrow] {
+          bottom: 84px;
+        }
+
+        mwc-fab[rtl] {
+          right: auto;
+          left: 16px;
+        }
+        mwc-fab[rtl][is-wide] {
+          bottom: 24px;
+          right: auto;
+          left: 24px;
         }
       `,
     ];

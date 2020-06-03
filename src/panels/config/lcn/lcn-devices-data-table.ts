@@ -8,22 +8,15 @@ import {
   LitElement,
   property,
   query,
-  PropertyValues,
 } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
-import {
-  showConfirmationDialog,
-  showAlertDialog,
-} from "../../../dialogs/generic/show-dialog-box";
+import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
 import { navigate } from "../../../common/navigate";
-import { LcnDeviceConfig, addDevice, deleteDevice } from "../../../data/lcn";
+import { LcnDeviceConfig, deleteDevice } from "../../../data/lcn";
 import "./lcn-entities-data-table";
 import "../../../components/ha-icon-button";
-import {
-  loadLCNCreateDeviceDialog,
-  showLCNCreateDeviceDialog,
-} from "./dialogs/show-dialog-create-device";
+import { loadLCNCreateDeviceDialog } from "./dialogs/show-dialog-create-device";
 
 @customElement("lcn-devices-data-table")
 export class LCNDevicesDataTable extends LitElement {
@@ -103,7 +96,6 @@ export class LCNDevicesDataTable extends LitElement {
           id="delete-device-column"
           width="55px"
           flex-grow="0"
-          .headerRenderer=${this._addDeviceRenderer.bind(this)}
           .renderer=${this._deleteDeviceRenderer.bind(this)}
         ></vaadin-grid-column>
       </vaadin-grid>
@@ -129,22 +121,6 @@ export class LCNDevicesDataTable extends LitElement {
     );
   }
 
-  private _addDeviceRenderer(root, column, rowData) {
-    render(
-      html`
-        <ha-icon-button
-          title="Add new LCN device (module or group)"
-          icon="hass:plus"
-        ></ha-icon-button>
-      `,
-      root
-    );
-    root.firstElementChild.onclick = (event) => {
-      event.stopPropagation();
-      this._addDevice();
-    };
-  }
-
   private _deleteDeviceRenderer(root, column, rowData) {
     render(
       html`
@@ -168,26 +144,6 @@ export class LCNDevicesDataTable extends LitElement {
         composed: true,
       })
     );
-  }
-
-  private async _addDevice() {
-    showLCNCreateDeviceDialog(this, {
-      createDevice: async (device_params) => {
-        if (!(await addDevice(this.hass, this.host, device_params))) {
-          await showAlertDialog(this, {
-            title: "Device already exists",
-            text: `The specified
-                  ${device_params.is_group ? "group" : "module"}
-                  with address ${device_params.address_id}
-                  in segment ${device_params.segment_id}
-                  already exists.
-                  Devices have to be unique.`,
-          });
-          return;
-        }
-        this._dispatchConfigurationChangedEvent();
-      },
-    });
   }
 
   private async _deleteDevice(item: LcnDeviceConfig) {
