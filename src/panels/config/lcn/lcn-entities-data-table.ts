@@ -8,20 +8,14 @@ import {
   property,
   query,
   CSSResult,
-  PropertyValues,
 } from "lit-element";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../types";
 import {
   LcnEntityConfig,
-  addEntity,
   deleteEntity,
   LcnDeviceConfig,
 } from "../../../data/lcn";
-import {
-  loadLCNCreateEntityDialog,
-  showLCNCreateEntityDialog,
-} from "./dialogs/show-dialog-create-entity";
 
 @customElement("lcn-entities-data-table")
 export class LCNEntitiesDataTable extends LitElement {
@@ -39,7 +33,6 @@ export class LCNEntitiesDataTable extends LitElement {
 
   protected firstUpdated(changedProperties) {
     super.firstUpdated(changedProperties);
-    loadLCNCreateEntityDialog();
   }
 
   protected update(changedProperties) {
@@ -62,27 +55,10 @@ export class LCNEntitiesDataTable extends LitElement {
           id="delete-entity-column"
           width="55px"
           flex-grow="0"
-          .headerRenderer=${this._addEntityRenderer.bind(this)}
           .renderer=${this._deleteEntityRenderer.bind(this)}
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
-  }
-
-  private _addEntityRenderer(root, column, rowData) {
-    render(
-      html`
-        <ha-icon-button
-          title="Create new entity"
-          icon="hass:plus"
-        ></ha-icon-button>
-      `,
-      root
-    );
-    root.firstElementChild.onclick = (event) => {
-      event.stopPropagation();
-      this._addEntity();
-    };
   }
 
   private _deleteEntityRenderer(root, column, rowData) {
@@ -108,16 +84,6 @@ export class LCNEntitiesDataTable extends LitElement {
         composed: true,
       })
     );
-  }
-
-  private async _addEntity() {
-    showLCNCreateEntityDialog(this, {
-      device: <LcnDeviceConfig>this.device,
-      createEntity: async (entity_params) => {
-        await addEntity(this.hass, this.host, entity_params);
-        this._dispatchConfigurationChangedEvent();
-      },
-    });
   }
 
   private async _deleteEntity(item: LcnEntityConfig) {

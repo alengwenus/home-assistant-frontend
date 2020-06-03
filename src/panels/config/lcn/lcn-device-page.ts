@@ -1,3 +1,4 @@
+import "@material/mwc-fab";
 import {
   css,
   customElement,
@@ -10,16 +11,25 @@ import {
 } from "lit-element";
 import { html } from "lit-html";
 import { HomeAssistant } from "../../../types";
+import { computeRTL } from "../../../common/util/compute_rtl";
 import "../../../layouts/hass-subpage";
 import "../ha-config-section";
 import "../../../layouts/hass-loading-screen";
 import "../../../components/ha-card";
+import "../../../components/ha-svg-icon";
+import { haStyle } from "../../../resources/styles";
+import { mdiPlus } from "@mdi/js";
 import {
   fetchEntities,
   fetchDevice,
+  addEntity,
   LcnDeviceConfig,
   LcnEntityConfig,
 } from "../../../data/lcn";
+import {
+  loadLCNCreateEntityDialog,
+  showLCNCreateEntityDialog,
+} from "./dialogs/show-dialog-create-entity";
 
 @customElement("lcn-device-page")
 export class LCNDevicePage extends LitElement {
@@ -44,6 +54,7 @@ export class LCNDevicePage extends LitElement {
     this.addEventListener("lcn-configuration-changed", async (event) => {
       this._fetchEntities(this.host, this.unique_device_id);
     });
+    loadLCNCreateEntityDialog();
   }
 
   protected updated(changedProperties: PropertyValues): void {
@@ -74,9 +85,29 @@ export class LCNDevicePage extends LitElement {
             .device=${this._device_config}
             .narrow=${this.narrow}
           ></lcn-entities-data-table>
+
+          <mwc-fab
+            aria-label="Create new entity"
+            title="Create new entity"
+            @click=${this._addEntity}
+            ?is-wide=${this.isWide}
+            ?narrow=${this.narrow}
+            ?rtl=${computeRTL(this.hass!)}
+          >
+            <ha-svg-icon slot="icon" path=${mdiPlus}></ha-svg-icon>
+          </mwc-fab>
         </ha-config-section>
       </hass-subpage>
     `;
+  }
+
+  private _dispatchConfigurationChangedEvent() {
+    this.dispatchEvent(
+      new CustomEvent("lcn-configuration-changed", {
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   private async _fetchEntities(host: string, unique_device_id: string) {
@@ -86,6 +117,48 @@ export class LCNDevicePage extends LitElement {
       host,
       unique_device_id
     );
+  }
+
+  private async _addEntity() {
+    showLCNCreateEntityDialog(this, {
+      device: <LcnDeviceConfig>this._device_config,
+      createEntity: async (entity_params) => {
+        await addEntity(this.hass, this.host, entity_params);
+        this._dispatchConfigurationChangedEvent();
+      },
+    });
+  }
+
+  static get styles(): CSSResult[] {
+    return [
+      haStyle,
+      css`
+        mwc-fab {
+          position: fixed;
+          bottom: 16px;
+          right: 16px;
+          z-index: 1;
+        }
+
+        mwc-fab[is-wide] {
+          bottom: 24px;
+          right: 24px;
+        }
+        mwc-fab[narrow] {
+          bottom: 84px;
+        }
+
+        mwc-fab[rtl] {
+          right: auto;
+          left: 16px;
+        }
+        mwc-fab[rtl][is-wide] {
+          bottom: 24px;
+          right: auto;
+          left: 24px;
+        }
+      `,
+    ];
   }
 }
 
