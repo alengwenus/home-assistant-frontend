@@ -14,6 +14,7 @@ import {
   query,
 } from "lit-element";
 import { html } from "lit-html";
+import { haStyleDialog } from "../../../../resources/styles";
 import { SwitchConfig } from "../../../../data/lcn";
 
 interface Port {
@@ -21,22 +22,22 @@ interface Port {
   value: string;
 }
 
-@customElement("lcn-platform-switch")
-export class LCNPlatformSwitch extends LitElement {
-  @property() public platform_data: SwitchConfig = { output: "OUTPUT1" };
+@customElement("lcn-config-switch-element")
+export class LCNConfigSwitchElement extends LitElement {
+  @property() public domainData: SwitchConfig = { output: "OUTPUT1" };
 
-  @property() private portType: string = "output";
+  @property() private _portType: string = "output";
 
-  @query("#ports-listbox") private portsListBox;
+  @query("#ports-listbox") private _portsListBox;
 
-  private output_ports: Port[] = [
+  private _output_ports: Port[] = [
     { name: "Output 1", value: "OUTPUT1" },
     { name: "Output 2", value: "OUTPUT2" },
     { name: "Output 3", value: "OUTPUT3" },
     { name: "Output 4", value: "OUTPUT4" },
   ];
 
-  private relay_ports: Port[] = [
+  private _relay_ports: Port[] = [
     { name: "Relay 1", value: "RELAY1" },
     { name: "Relay 2", value: "RELAY2" },
     { name: "Relay 3", value: "RELAY3" },
@@ -47,7 +48,7 @@ export class LCNPlatformSwitch extends LitElement {
     { name: "Relay 8", value: "RELAY8" },
   ];
 
-  private ports = { output: this.output_ports, relay: this.relay_ports };
+  private ports = { output: this._output_ports, relay: this._relay_ports };
 
   protected render(): TemplateResult {
     return html`
@@ -64,14 +65,14 @@ export class LCNPlatformSwitch extends LitElement {
         <paper-dropdown-menu
           label="Port"
           @selected-item-changed=${this._portChanged}
-          .value=${this.ports[this.portType][0].name}
+          .value=${this.ports[this._portType][0].name}
         >
           <paper-listbox
             id="ports-listbox"
             slot="dropdown-content"
             selected="0"
           >
-            ${this.ports[this.portType].map((port) => {
+            ${this.ports[this._portType].map((port) => {
               return html`
                 <paper-item .itemValue=${port.value}>${port.name}</paper-item>
               `;
@@ -82,14 +83,25 @@ export class LCNPlatformSwitch extends LitElement {
   }
 
   private _portTypeChanged(ev: CustomEvent): void {
-    this.portType = ev.detail.value;
-    this.portsListBox.select(0);
+    this._portType = ev.detail.value;
+    this._portsListBox.select(0);
   }
 
   private _portChanged(ev: CustomEvent): void {
     if (!ev.detail.value) {
       return;
     }
-    this.platform_data.output = ev.detail.value.itemValue;
+    this.domainData.output = ev.detail.value.itemValue;
+  }
+
+  static get styles(): CSSResult[] {
+    return [
+      haStyleDialog,
+      css`
+        #ports-listbox {
+          width: 120px;
+        }
+      `,
+    ];
   }
 }

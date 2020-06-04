@@ -20,9 +20,9 @@ export interface LcnEntityConfig {
   name: string;
   unique_id: string;
   unique_device_id: string;
-  platform: string;
+  domain: string;
   resource: string;
-  platform_data: SwitchConfig[] | LightConfig[];
+  domain_data: SwitchConfig[] | LightConfig[];
 }
 
 export interface LcnDeviceConfig {
@@ -91,8 +91,8 @@ export const addEntity = (
     host: host,
     unique_device_id: entity.unique_device_id,
     name: entity.name,
-    platform: entity.platform,
-    platform_data: entity.platform_data,
+    platform: entity.domain,
+    platform_data: entity.domain_data,
   });
 
 export const deleteEntity = (

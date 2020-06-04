@@ -12,7 +12,6 @@ import {
   PropertyValues,
   TemplateResult,
   CSSResult,
-  query,
 } from "lit-element";
 import { html } from "lit-html";
 import { HomeAssistant } from "../../../types";
@@ -56,7 +55,7 @@ export class LCNConfigDashboard extends LitElement {
 
   @property() private host: string = "";
 
-  @property() private _device_configs: LcnDeviceConfig[] = [];
+  @property() private _deviceConfigs: LcnDeviceConfig[] = [];
 
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
@@ -114,7 +113,7 @@ export class LCNConfigDashboard extends LitElement {
             <lcn-devices-data-table
               .hass=${this.hass}
               .host=${this.host}
-              .devices=${this._device_configs}
+              .devices=${this._deviceConfigs}
               .narrow=${this.narrow}
             ></lcn-devices-data-table>
           </div>
@@ -147,27 +146,27 @@ export class LCNConfigDashboard extends LitElement {
   }
 
   private async _fetchDevices(host: string) {
-    this._device_configs = await fetchDevices(this.hass!, host);
+    this._deviceConfigs = await fetchDevices(this.hass!, host);
   }
 
   private async _scanDevices(host: string) {
     const dialog: () =>
       | ScanModulesDialog
       | undefined = showLCNScanModulesDialog(this);
-    this._device_configs = await scanDevices(this.hass!, this.host);
+    this._deviceConfigs = await scanDevices(this.hass!, this.host);
     dialog()!.closeDialog();
   }
 
   private _addDevice() {
     showLCNCreateDeviceDialog(this, {
-      createDevice: async (device_params) => {
-        if (!(await addDevice(this.hass, this.host, device_params))) {
+      createDevice: async (deviceParams) => {
+        if (!(await addDevice(this.hass, this.host, deviceParams))) {
           await showAlertDialog(this, {
             title: "Device already exists",
             text: `The specified
-                  ${device_params.is_group ? "group" : "module"}
-                  with address ${device_params.address_id}
-                  in segment ${device_params.segment_id}
+                  ${deviceParams.is_group ? "group" : "module"}
+                  with address ${deviceParams.address_id}
+                  in segment ${deviceParams.segment_id}
                   already exists.
                   Devices have to be unique.`,
           });

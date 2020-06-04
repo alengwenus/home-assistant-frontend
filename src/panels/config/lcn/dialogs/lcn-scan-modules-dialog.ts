@@ -5,7 +5,6 @@ import {
   customElement,
   LitElement,
   property,
-  PropertyValues,
   TemplateResult,
   CSSResult,
   query,

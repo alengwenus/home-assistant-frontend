@@ -43,10 +43,7 @@ export class LCNEntitiesDataTable extends LitElement {
     return html`
       <vaadin-grid class="lcn-table" height-by-rows .items=${this.entities}>
         <vaadin-grid-column path="name" header="Name"></vaadin-grid-column>
-        <vaadin-grid-column
-          path="platform"
-          header="Platform"
-        ></vaadin-grid-column>
+        <vaadin-grid-column path="domain" header="Domain"></vaadin-grid-column>
         <vaadin-grid-column
           path="resource"
           header="Resource"
