@@ -12,7 +12,6 @@ import {
   PropertyValues,
   TemplateResult,
   CSSResult,
-  query,
   queryAll,
 } from "lit-element";
 import { html } from "lit-html";

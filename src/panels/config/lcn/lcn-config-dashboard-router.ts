@@ -42,8 +42,8 @@ class LCNConfigDashboardRouter extends HassRouterPage {
     el.isWide = this.isWide;
     el.narrow = this.narrow;
     if (this._currentPage === "device") {
-      el.unique_device_id = this.routeTail.path.substr(1);
-      el.host = el.unique_device_id.split(".")[1];
+      el.uniqueDeviceId = this.routeTail.path.substr(1);
+      el.host = el.uniqueDeviceId.split(".")[1];
     }
   }
 }
