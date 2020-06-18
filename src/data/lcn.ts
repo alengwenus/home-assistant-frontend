@@ -91,8 +91,8 @@ export const addEntity = (
     host: host,
     unique_device_id: entity.unique_device_id,
     name: entity.name,
-    platform: entity.domain,
-    platform_data: entity.domain_data,
+    domain: entity.domain,
+    domain_data: entity.domain_data,
   });
 
 export const deleteEntity = (
