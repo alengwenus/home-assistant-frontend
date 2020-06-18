@@ -37,7 +37,7 @@ export class CreateEntityDialog extends LitElement {
 
   // @queryAll("paper-input") private _inputs: any;
 
-  private _platforms: string[] = ["switch", "light"];
+  private _domains: string[] = ["switch", "light"];
 
   public async showDialog(params: LcnEntityDialogParams): Promise<void> {
     this._params = params;
@@ -74,13 +74,13 @@ export class CreateEntityDialog extends LitElement {
 
         <form>
           <paper-dropdown-menu
-            label="Platform"
-            @selected-item-changed=${this._platform_changed}
+            label="Domain"
+            @selected-item-changed=${this._domain_changed}
           >
             <paper-listbox slot="dropdown-content" selected="0">
-              ${this._platforms.map((platform) => {
+              ${this._domains.map((domain) => {
                 return html`
-                  <paper-item .itemValue=${platform}>${platform} </paper-item>
+                  <paper-item .itemValue=${domain}>${domain} </paper-item>
                 `;
               })}
             </paper-listbox>
@@ -140,7 +140,7 @@ export class CreateEntityDialog extends LitElement {
     this._params = undefined;
   }
 
-  private _platform_changed(ev: CustomEvent) {
+  private _domain_changed(ev: CustomEvent) {
     if (!ev.detail.value) {
       return;
     }

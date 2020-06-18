@@ -90,6 +90,7 @@ export class LCNDomainSwitch extends LitElement {
     if (!ev.detail.value) {
       return;
     }
+    console.log(ev.detail.value);
     this.domainData.output = ev.detail.value.itemValue;
   }
 
