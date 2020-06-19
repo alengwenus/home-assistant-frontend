@@ -8,7 +8,6 @@ import {
   customElement,
   LitElement,
   property,
-  PropertyValues,
   TemplateResult,
   CSSResult,
   query,
@@ -30,14 +29,14 @@ export class LCNConfigSwitchElement extends LitElement {
 
   @query("#ports-listbox") private _portsListBox;
 
-  private _output_ports: Port[] = [
+  private _outputPorts: Port[] = [
     { name: "Output 1", value: "OUTPUT1" },
     { name: "Output 2", value: "OUTPUT2" },
     { name: "Output 3", value: "OUTPUT3" },
     { name: "Output 4", value: "OUTPUT4" },
   ];
 
-  private _relay_ports: Port[] = [
+  private _relayPorts: Port[] = [
     { name: "Relay 1", value: "RELAY1" },
     { name: "Relay 2", value: "RELAY2" },
     { name: "Relay 3", value: "RELAY3" },
@@ -48,7 +47,7 @@ export class LCNConfigSwitchElement extends LitElement {
     { name: "Relay 8", value: "RELAY8" },
   ];
 
-  private ports = { output: this._output_ports, relay: this._relay_ports };
+  private _ports = { output: this._outputPorts, relay: this._relayPorts };
 
   protected render(): TemplateResult {
     return html`
@@ -65,14 +64,14 @@ export class LCNConfigSwitchElement extends LitElement {
         <paper-dropdown-menu
           label="Port"
           @selected-item-changed=${this._portChanged}
-          .value=${this.ports[this._portType][0].name}
+          .value=${this._ports[this._portType][0].name}
         >
           <paper-listbox
             id="ports-listbox"
             slot="dropdown-content"
             selected="0"
           >
-            ${this.ports[this._portType].map((port) => {
+            ${this._ports[this._portType].map((port) => {
               return html`
                 <paper-item .itemValue=${port.value}>${port.name}</paper-item>
               `;
