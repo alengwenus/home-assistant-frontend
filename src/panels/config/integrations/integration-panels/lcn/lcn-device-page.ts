@@ -9,14 +9,14 @@ import {
   CSSResult,
 } from "lit-element";
 import { html } from "lit-html";
-import { HomeAssistant } from "../../../types";
-import { computeRTL } from "../../../common/util/compute_rtl";
-import "../../../layouts/hass-subpage";
-import "../ha-config-section";
-import "../../../layouts/hass-loading-screen";
-import "../../../components/ha-card";
-import "../../../components/ha-svg-icon";
-import { haStyle } from "../../../resources/styles";
+import { HomeAssistant } from "../../../../../types";
+import { computeRTL } from "../../../../../common/util/compute_rtl";
+import "../../../../../layouts/hass-subpage";
+import "../../../ha-config-section";
+import "../../../../../layouts/hass-loading-screen";
+import "../../../../../components/ha-card";
+import "../../../../../components/ha-svg-icon";
+import { haStyle } from "../../../../../resources/styles";
 import { mdiPlus } from "@mdi/js";
 import {
   fetchEntities,
@@ -24,12 +24,12 @@ import {
   addEntity,
   LcnDeviceConfig,
   LcnEntityConfig,
-} from "../../../data/lcn";
+} from "../../../../../data/lcn";
 import {
   loadLCNCreateEntityDialog,
   showLCNCreateEntityDialog,
 } from "./dialogs/show-dialog-create-entity";
-import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
+import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box";
 
 @customElement("lcn-device-page")
 export class LCNDevicePage extends LitElement {
@@ -122,7 +122,7 @@ export class LCNDevicePage extends LitElement {
         if (!(await addEntity(this.hass, this.host, entityParams))) {
           await showAlertDialog(this, {
             title: "LCN resource already assigned",
-            text: `The specified LCN resource ${entityParams.resource} is already
+            text: `The specified LCN resource is already
                    assigned to an entity within the ${entityParams.domain}-domain.
                    LCN resources may only be assigned once within a domain.`,
           });

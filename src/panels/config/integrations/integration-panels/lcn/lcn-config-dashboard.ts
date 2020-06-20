@@ -14,16 +14,16 @@ import {
   CSSResult,
 } from "lit-element";
 import { html } from "lit-html";
-import { HomeAssistant } from "../../../types";
-import { computeRTL } from "../../../common/util/compute_rtl";
-import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-subpage";
-import "../ha-config-section";
-import "../../../layouts/hass-loading-screen";
-import "../../../components/ha-card";
-import "./lcn-devices-data-table";
-import "../../../components/ha-svg-icon";
-import { haStyle } from "../../../resources/styles";
+import { HomeAssistant } from "../../../../../types";
+import { computeRTL } from "../../../../../common/util/compute_rtl";
+import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box";
+import "../../../../../layouts/hass-tabs-subpage";
+import { configSections } from "../../../ha-panel-config";
+import "../../../ha-config-section";
+import "../../../../../layouts/hass-loading-screen";
+import "../../../../../components/ha-card";
+import "../../../../../components/ha-svg-icon";
+import { haStyle } from "../../../../../resources/styles";
 import { mdiPlus } from "@mdi/js";
 import { ScanModulesDialog } from "./dialogs/lcn-scan-modules-dialog";
 import {
@@ -34,6 +34,7 @@ import {
   loadLCNCreateDeviceDialog,
   showLCNCreateDeviceDialog,
 } from "./dialogs/show-dialog-create-device";
+import "./lcn-devices-data-table";
 import {
   fetchHosts,
   fetchDevices,
@@ -41,15 +42,18 @@ import {
   addDevice,
   LcnHosts,
   LcnDeviceConfig,
-} from "../../../data/lcn";
+} from "../../../../../data/lcn";
+import { Route } from "workbox-routing";
 
 @customElement("lcn-config-dashboard")
 export class LCNConfigDashboard extends LitElement {
   @property() public hass!: HomeAssistant;
 
-  @property() public isWide?: boolean;
+  @property() public isWide!: boolean;
 
-  @property() public narrow?: boolean;
+  @property() public narrow!: boolean;
+
+  @property() public route!: Route;
 
   @property() private _hosts: LcnHosts[] = [];
 
@@ -74,16 +78,15 @@ export class LCNConfigDashboard extends LitElement {
     }
     const hass = this.hass;
     return html`
-      <hass-subpage .header=${hass.localize("ui.panel.config.lcn.title")}>
-        <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide}>
-          <span slot="header">
-            ${hass.localize("ui.panel.config.lcn.header")}
-          </span>
-
-          <span slot="introduction">
-            ${hass.localize("ui.panel.config.lcn.introduction")}
-          </span>
-
+      <hass-tabs-subpage
+        .hass=${this.hass}
+        .narrow=${this.narrow}
+        .route=${this.route}
+        back-path="/config"
+        .tabs=${configSections.general}
+        .header=${hass.localize("ui.panel.config.lcn.title")}
+      >
+        <ha-card header="LCN Configuration">
           <div id="controls">
             <div id="box">
               <div id="hosts-dropdown">
@@ -128,7 +131,7 @@ export class LCNConfigDashboard extends LitElement {
           >
             <ha-svg-icon slot="icon" path=${mdiPlus}></ha-svg-icon>
           </mwc-fab>
-        </ha-config-section>
+        </ha-card>
       </hass-subpage>
     `;
   }
@@ -181,6 +184,11 @@ export class LCNConfigDashboard extends LitElement {
     return [
       haStyle,
       css`
+        ha-card {
+          margin: auto;
+          margin-top: 16px;
+          max-width: 95%;
+        }
         .disabled {
           opacity: 0.3;
           pointer-events: none;

@@ -1,5 +1,5 @@
-import { fireEvent } from "../../../../common/dom/fire_event";
-import { LcnDeviceConfig } from "../../../../data/lcn";
+import { fireEvent } from "../../../../../../common/dom/fire_event";
+import { LcnDeviceConfig } from "../../../../../../data/lcn";
 
 export interface LcnDeviceDialogParams {
   createDevice: (values: Partial<LcnDeviceConfig>) => Promise<unknown>;

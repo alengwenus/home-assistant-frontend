@@ -1,4 +1,4 @@
-import "../../../../components/dialog/ha-paper-dialog";
+import "../../../../../../components/dialog/ha-paper-dialog";
 import "@polymer/paper-spinner/paper-spinner";
 import {
   css,
@@ -10,8 +10,8 @@ import {
   query,
 } from "lit-element";
 import { html } from "lit-html";
-import { haStyleDialog } from "../../../../resources/styles";
-import { HomeAssistant } from "../../../../types";
+import { haStyleDialog } from "../../../../../../resources/styles";
+import { HomeAssistant } from "../../../../../../types";
 
 @customElement("lcn-scan-modules-dialog")
 export class ScanModulesDialog extends LitElement {

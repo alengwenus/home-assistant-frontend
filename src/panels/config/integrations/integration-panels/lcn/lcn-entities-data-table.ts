@@ -1,6 +1,6 @@
 import "@vaadin/vaadin-grid";
 import { GridElement } from "@vaadin/vaadin-grid";
-import "../../../components/ha-icon-button";
+import "../../../../../components/ha-icon-button";
 import {
   css,
   customElement,
@@ -10,12 +10,12 @@ import {
   CSSResult,
 } from "lit-element";
 import { html, render } from "lit-html";
-import { HomeAssistant } from "../../../types";
+import { HomeAssistant } from "../../../../../types";
 import {
   LcnEntityConfig,
   deleteEntity,
   LcnDeviceConfig,
-} from "../../../data/lcn";
+} from "../../../../../data/lcn";
 
 @customElement("lcn-entities-data-table")
 export class LCNEntitiesDataTable extends LitElement {
