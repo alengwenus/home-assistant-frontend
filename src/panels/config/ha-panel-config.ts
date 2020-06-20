@@ -181,7 +181,7 @@ export const configSections: { [name: string]: PageNavigation[] } = {
       component: "lcn",
       path: "/config/lcn",
       translationKey: "ui.panel.config.lcn.caption",
-      icon: "hass:tools",
+      iconPath: mdiTools,
     },
     {
       component: "zha",
@@ -301,7 +301,7 @@ class HaPanelConfig extends HassRouterPage {
         tag: "lcn-config-dashboard-router",
         load: () =>
           import(
-            /* webpackChunkName: "panel-config-lcn" */ "./lcn/lcn-config-dashboard-router"
+            /* webpackChunkName: "panel-config-lcn" */ "./integrations/integration-panels/lcn/lcn-config-dashboard-router"
           ),
       },
       zha: {

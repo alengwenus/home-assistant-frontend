@@ -13,8 +13,8 @@ import {
   query,
 } from "lit-element";
 import { html } from "lit-html";
-import { haStyleDialog } from "../../../../resources/styles";
-import { SwitchConfig } from "../../../../data/lcn";
+import { haStyleDialog } from "../../../../../../resources/styles";
+import { SwitchConfig } from "../../../../../../data/lcn";
 
 interface Port {
   name: string;

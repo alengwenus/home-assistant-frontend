@@ -1,5 +1,5 @@
-import { fireEvent } from "../../../../common/dom/fire_event";
-import { LcnEntityConfig, LcnDeviceConfig } from "../../../../data/lcn";
+import { fireEvent } from "../../../../../../common/dom/fire_event";
+import { LcnEntityConfig, LcnDeviceConfig } from "../../../../../../data/lcn";
 
 export interface LcnEntityDialogParams {
   device: LcnDeviceConfig;

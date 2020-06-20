@@ -2,8 +2,8 @@ import "@polymer/app-layout/app-toolbar/app-toolbar";
 import "@polymer/paper-input/paper-input";
 import "@polymer/paper-radio-button";
 import "@polymer/paper-radio-group";
-import "../../../../components/dialog/ha-paper-dialog";
-import "../../../../components/ha-icon-button";
+import "../../../../../../components/dialog/ha-paper-dialog";
+import "../../../../../../components/ha-icon-button";
 import {
   css,
   customElement,
@@ -11,14 +11,13 @@ import {
   property,
   TemplateResult,
   CSSResult,
-  query,
 } from "lit-element";
 import { html } from "lit-html";
-import { PolymerChangedEvent } from "../../../../polymer-types";
-import { haStyleDialog } from "../../../../resources/styles";
-import { HomeAssistant } from "../../../../types";
+import { PolymerChangedEvent } from "../../../../../../polymer-types";
+import { haStyleDialog } from "../../../../../../resources/styles";
+import { HomeAssistant } from "../../../../../../types";
 import { LcnEntityDialogParams } from "./show-dialog-create-entity";
-import { LcnEntityConfig } from "../../../../data/lcn";
+import { LcnEntityConfig } from "../../../../../../data/lcn";
 import "./lcn-config-switch";
 
 @customElement("lcn-create-entity-dialog")

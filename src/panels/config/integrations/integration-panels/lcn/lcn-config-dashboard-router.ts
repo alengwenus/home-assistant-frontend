@@ -2,8 +2,8 @@ import { customElement, property } from "lit-element";
 import {
   HassRouterPage,
   RouterOptions,
-} from "../../../layouts/hass-router-page";
-import { HomeAssistant } from "../../../types";
+} from "../../../../../layouts/hass-router-page";
+import { HomeAssistant } from "../../../../../types";
 
 @customElement("lcn-config-dashboard-router")
 class LCNConfigDashboardRouter extends HassRouterPage {

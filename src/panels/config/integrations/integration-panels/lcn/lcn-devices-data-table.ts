@@ -10,12 +10,12 @@ import {
   query,
 } from "lit-element";
 import { html, render } from "lit-html";
-import { HomeAssistant } from "../../../types";
-import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
-import { navigate } from "../../../common/navigate";
-import { LcnDeviceConfig, deleteDevice } from "../../../data/lcn";
+import { HomeAssistant } from "../../../../../types";
+import { showConfirmationDialog } from "../../../../../dialogs/generic/show-dialog-box";
+import { navigate } from "../../../../../common/navigate";
+import { LcnDeviceConfig, deleteDevice } from "../../../../../data/lcn";
 import "./lcn-entities-data-table";
-import "../../../components/ha-icon-button";
+import "../../../../../components/ha-icon-button";
 import { loadLCNCreateDeviceDialog } from "./dialogs/show-dialog-create-device";
 
 @customElement("lcn-devices-data-table")
