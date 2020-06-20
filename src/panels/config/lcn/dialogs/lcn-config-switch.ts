@@ -63,13 +63,12 @@ export class LCNConfigSwitchElement extends LitElement {
         </paper-radio-group>
         <paper-dropdown-menu
           label="Port"
-          @selected-item-changed=${this._portChanged}
           .value=${this._ports[this._portType][0].name}
         >
           <paper-listbox
             id="ports-listbox"
             slot="dropdown-content"
-            selected="0"
+            @selected-item-changed=${this._portChanged}
           >
             ${this._ports[this._portType].map((port) => {
               return html`
@@ -83,14 +82,18 @@ export class LCNConfigSwitchElement extends LitElement {
 
   private _portTypeChanged(ev: CustomEvent): void {
     this._portType = ev.detail.value;
-    this._portsListBox.select(0);
+    this._portsListBox.selectIndex(0);
+
+    const port = this._ports[this._portType][this._portsListBox.selected];
+    this.domainData.output = port.value;
   }
 
   private _portChanged(ev: CustomEvent): void {
     if (!ev.detail.value) {
       return;
     }
-    this.domainData.output = ev.detail.value.itemValue;
+    const port = this._ports[this._portType][this._portsListBox.selected];
+    this.domainData.output = port.value;
   }
 
   static get styles(): CSSResult[] {

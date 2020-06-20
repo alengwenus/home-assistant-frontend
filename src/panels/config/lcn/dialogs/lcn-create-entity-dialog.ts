@@ -33,7 +33,7 @@ export class CreateEntityDialog extends LitElement {
 
   @property() private _invalid: boolean = false;
 
-  @query("#domain") private _domainElement;
+  // @query("#domain") private _domainElement;
 
   // @queryAll("paper-input") private _inputs: any;
 
@@ -124,13 +124,13 @@ export class CreateEntityDialog extends LitElement {
   }
 
   private async _create(): Promise<void> {
-    console.log(this._domainElement.domainData);
+    const domainElement = this.shadowRoot?.querySelector<any>("#domain");
 
     const values: Partial<LcnEntityConfig> = {
       name: this._name ? this._name : this.domain,
       unique_device_id: this._params!.device.unique_id,
       domain: this.domain,
-      domain_data: this._domainElement.domainData,
+      domain_data: domainElement.domainData,
     };
     await this._params!.createEntity(values);
     this._closeDialog();

@@ -29,6 +29,7 @@ import {
   loadLCNCreateEntityDialog,
   showLCNCreateEntityDialog,
 } from "./dialogs/show-dialog-create-entity";
+import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
 
 @customElement("lcn-device-page")
 export class LCNDevicePage extends LitElement {
@@ -118,7 +119,15 @@ export class LCNDevicePage extends LitElement {
     showLCNCreateEntityDialog(this, {
       device: <LcnDeviceConfig>this._deviceConfig,
       createEntity: async (entityParams) => {
-        await addEntity(this.hass, this.host, entityParams);
+        if (!(await addEntity(this.hass, this.host, entityParams))) {
+          await showAlertDialog(this, {
+            title: "LCN resource already assigned",
+            text: `The specified LCN resource ${entityParams.resource} is already
+                   assigned to an entity within the ${entityParams.domain}-domain.
+                   LCN resources may only be assigned once within a domain.`,
+          });
+          return;
+        }
         this._dispatchConfigurationChangedEvent();
       },
     });
