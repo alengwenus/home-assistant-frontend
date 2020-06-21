@@ -9,14 +9,26 @@ import {
   property,
   query,
 } from "lit-element";
+import memoizeOne from "memoize-one";
 import { html, render } from "lit-html";
 import { HomeAssistant } from "../../../../../types";
 import { showConfirmationDialog } from "../../../../../dialogs/generic/show-dialog-box";
 import { navigate } from "../../../../../common/navigate";
 import { LcnDeviceConfig, deleteDevice } from "../../../../../data/lcn";
-import "./lcn-entities-data-table";
 import "../../../../../components/ha-icon-button";
 import { loadLCNCreateDeviceDialog } from "./dialogs/show-dialog-create-device";
+import "../../../../../components/data-table/ha-data-table";
+import {
+  DataTableColumnContainer,
+  HaDataTable,
+} from "../../../../../components/data-table/ha-data-table";
+
+export interface DeviceRowData {
+  name: string;
+  segment_id: number;
+  address_id: number;
+  is_group: boolean;
+}
 
 @customElement("lcn-devices-data-table")
 export class LCNDevicesDataTable extends LitElement {
@@ -30,12 +42,76 @@ export class LCNDevicesDataTable extends LitElement {
 
   @query("vaadin-grid") private _grid!: GridElement;
 
+  @query("ha-data-table") private _dataTable!: HaDataTable;
+
+  private _devices = memoizeOne((devices: LcnDeviceConfig[]) => {
+    let deviceRowData: DeviceRowData[] = [];
+
+    deviceRowData = devices.map((device) => {
+      return {
+        name: device.name,
+        segment_id: device.segment_id,
+        address_id: device.address_id,
+        is_group: device.is_group,
+        unique_id: device.unique_id,
+      };
+    });
+    return deviceRowData;
+  });
+
+  private _columns = memoizeOne(
+    (narrow: boolean): DataTableColumnContainer =>
+      narrow
+        ? {
+            name: {
+              title: "Name",
+              sortable: true,
+              direction: "asc",
+              grows: true,
+            },
+          }
+        : {
+            name: {
+              title: "Name",
+              sortable: true,
+              direction: "asc",
+              grows: true,
+            },
+            segment_id: {
+              title: "Segment",
+              sortable: true,
+              width: "90px",
+            },
+            address_id: {
+              title: "ID",
+              sortable: true,
+              width: "90px",
+            },
+            is_group: {
+              title: "Group",
+              sortable: true,
+              width: "90px",
+            },
+          }
+  );
+
   protected firstUpdated(changedProperties) {
     super.firstUpdated(changedProperties);
     loadLCNCreateDeviceDialog();
   }
 
   protected render() {
+    return html`
+      <ha-data-table
+        .columns=${this._columns(this.narrow)}
+        .data=${this._devices(this.devices)}
+        .id=${"unique_id"}
+        auto-height
+      ></ha-data-table>
+    `;
+  }
+
+  protected render_old() {
     return html`
       <dom-module id="grid-custom-theme" theme-for="vaadin-grid">
         <template>
