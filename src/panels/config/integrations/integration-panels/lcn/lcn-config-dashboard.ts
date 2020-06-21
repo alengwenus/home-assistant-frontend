@@ -14,7 +14,7 @@ import {
   CSSResult,
 } from "lit-element";
 import { html } from "lit-html";
-import { HomeAssistant } from "../../../../../types";
+import { HomeAssistant, Route } from "../../../../../types";
 import { computeRTL } from "../../../../../common/util/compute_rtl";
 import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box";
 import "../../../../../layouts/hass-tabs-subpage";
@@ -43,7 +43,6 @@ import {
   LcnHosts,
   LcnDeviceConfig,
 } from "../../../../../data/lcn";
-import { Route } from "workbox-routing";
 
 @customElement("lcn-config-dashboard")
 export class LCNConfigDashboard extends LitElement {
@@ -57,7 +56,7 @@ export class LCNConfigDashboard extends LitElement {
 
   @property() private _hosts: LcnHosts[] = [];
 
-  @property() private host: string = "";
+  @property() private _host: string = "";
 
   @property() private _deviceConfigs: LcnDeviceConfig[] = [];
 
@@ -68,7 +67,7 @@ export class LCNConfigDashboard extends LitElement {
     loadLCNCreateDeviceDialog();
 
     this.addEventListener("lcn-config-changed", async (event) => {
-      this._fetchDevices(this.host);
+      this._fetchDevices(this._host);
     });
   }
 
@@ -76,7 +75,6 @@ export class LCNConfigDashboard extends LitElement {
     if (!this.hass) {
       return html` <hass-loading-screen></hass-loading-screen> `;
     }
-    const hass = this.hass;
     return html`
       <hass-tabs-subpage
         .hass=${this.hass}
@@ -84,42 +82,49 @@ export class LCNConfigDashboard extends LitElement {
         .route=${this.route}
         back-path="/config"
         .tabs=${configSections.general}
-        .header=${hass.localize("ui.panel.config.lcn.title")}
       >
-        <ha-card header="LCN Configuration">
-          <div id="controls">
-            <div id="box">
-              <div id="hosts-dropdown">
-                <paper-dropdown-menu
-                  label="Hosts"
-                  @selected-item-changed=${this._hostChanged}
-                >
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this._hosts.map((host) => {
-                      return html`
-                        <paper-item .itemValue=${host.name}
-                          >${host.name}</paper-item
-                        >
-                      `;
-                    })}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
+        <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide}>
+          <span slot="header">
+            ${this.hass.localize("ui.panel.config.lcn.header")}
+          </span>
 
-              <div id="scan-devices">
-                <mwc-button raised @click=${this._scanDevices}
-                  >Scan modules</mwc-button
-                >
-              </div>
+          <span slot="introduction">
+            ${this.hass.localize("ui.panel.config.lcn.introduction")}
+          </span>
+
+          <div id="box">
+            <div id="hosts-dropdown">
+              <paper-dropdown-menu
+                label="Hosts"
+                @selected-item-changed=${this._hostChanged}
+              >
+                <paper-listbox slot="dropdown-content" selected="0">
+                  ${this._hosts.map((host) => {
+                    return html`
+                      <paper-item .itemValue=${host.name}
+                        >${host.name}</paper-item
+                      >
+                    `;
+                  })}
+                </paper-listbox>
+              </paper-dropdown-menu>
             </div>
 
+            <div id="scan-devices">
+              <mwc-button raised @click=${this._scanDevices}
+                >Scan modules</mwc-button
+              >
+            </div>
+          </div>
+
+          <ha-card header="Devices for host (${this._host})">
             <lcn-devices-data-table
               .hass=${this.hass}
-              .host=${this.host}
+              .host=${this._host}
               .devices=${this._deviceConfigs}
               .narrow=${this.narrow}
             ></lcn-devices-data-table>
-          </div>
+          </ha-card>
 
           <mwc-fab
             aria-label="Create new module/group"
@@ -131,8 +136,8 @@ export class LCNConfigDashboard extends LitElement {
           >
             <ha-svg-icon slot="icon" path=${mdiPlus}></ha-svg-icon>
           </mwc-fab>
-        </ha-card>
-      </hass-subpage>
+        </ha-config-section>
+      </hass-tabs-subpage>
     `;
   }
 
@@ -140,8 +145,8 @@ export class LCNConfigDashboard extends LitElement {
     if (!ev.detail.value) {
       return;
     }
-    this.host = ev.detail.value.itemValue;
-    this._fetchDevices(this.host);
+    this._host = ev.detail.value.itemValue;
+    this._fetchDevices(this._host);
   }
 
   private async _fetchHosts() {
@@ -156,14 +161,14 @@ export class LCNConfigDashboard extends LitElement {
     const dialog: () =>
       | ScanModulesDialog
       | undefined = showLCNScanModulesDialog(this);
-    this._deviceConfigs = await scanDevices(this.hass!, this.host);
+    this._deviceConfigs = await scanDevices(this.hass!, this._host);
     dialog()!.closeDialog();
   }
 
   private _addDevice() {
     showLCNCreateDeviceDialog(this, {
       createDevice: async (deviceParams) => {
-        if (!(await addDevice(this.hass, this.host, deviceParams))) {
+        if (!(await addDevice(this.hass, this._host, deviceParams))) {
           await showAlertDialog(this, {
             title: "Device already exists",
             text: `The specified
@@ -175,7 +180,7 @@ export class LCNConfigDashboard extends LitElement {
           });
           return;
         }
-        this._fetchDevices(this.host);
+        this._fetchDevices(this._host);
       },
     });
   }
@@ -184,11 +189,6 @@ export class LCNConfigDashboard extends LitElement {
     return [
       haStyle,
       css`
-        ha-card {
-          margin: auto;
-          margin-top: 16px;
-          max-width: 95%;
-        }
         .disabled {
           opacity: 0.3;
           pointer-events: none;

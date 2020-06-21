@@ -9,9 +9,10 @@ import {
   CSSResult,
 } from "lit-element";
 import { html } from "lit-html";
-import { HomeAssistant } from "../../../../../types";
+import { HomeAssistant, Route } from "../../../../../types";
 import { computeRTL } from "../../../../../common/util/compute_rtl";
-import "../../../../../layouts/hass-subpage";
+import "../../../../../layouts/hass-tabs-subpage";
+import { configSections } from "../../../ha-panel-config";
 import "../../../ha-config-section";
 import "../../../../../layouts/hass-loading-screen";
 import "../../../../../components/ha-card";
@@ -35,9 +36,11 @@ import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box"
 export class LCNDevicePage extends LitElement {
   @property() public hass!: HomeAssistant;
 
-  @property() public isWide?: boolean;
+  @property() public isWide!: boolean;
 
-  @property() public narrow?: boolean;
+  @property() public narrow!: boolean;
+
+  @property() public route!: Route;
 
   @property() public uniqueDeviceId!: string;
 
@@ -69,22 +72,39 @@ export class LCNDevicePage extends LitElement {
       return html` <hass-loading-screen></hass-loading-screen> `;
     }
     return html`
-      <hass-subpage
-        .header=${html`
-          Entities of ${this._deviceConfig.is_group ? "group" : "module"}
-          (${this.host}, ${this._deviceConfig.segment_id},
-          ${this._deviceConfig.address_id})
-          ${this._deviceConfig.name ? " - " + this._deviceConfig.name : ""}
-        `}
+      <hass-tabs-subpage
+        .hass=${this.hass}
+        .narrow=${this.narrow}
+        .route=${this.route}
+        back-path="/config/lcn"
+        .tabs=${configSections.general}
       >
         <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide}>
-          <lcn-entities-data-table
-            .hass=${this.hass}
-            .host=${this.host}
-            .entities=${this._entityConfigs}
-            .device=${this._deviceConfig}
-            .narrow=${this.narrow}
-          ></lcn-entities-data-table>
+          <span slot="header">
+            Device configuration
+          </span>
+
+          <span slot="introduction">
+            Configure entities for this device.
+          </span>
+
+          <ha-card
+            header="Entities for ${this._deviceConfig.is_group
+              ? "group"
+              : "module"}
+              (${this.host}, ${this._deviceConfig.segment_id},
+              ${this._deviceConfig.address_id})
+              ${this._deviceConfig.name ? " - " + this._deviceConfig.name : ""}
+            "
+          >
+            <lcn-entities-data-table
+              .hass=${this.hass}
+              .host=${this.host}
+              .entities=${this._entityConfigs}
+              .device=${this._deviceConfig}
+              .narrow=${this.narrow}
+            ></lcn-entities-data-table>
+          </ha-card>
 
           <mwc-fab
             aria-label="Create new entity"
@@ -97,7 +117,7 @@ export class LCNDevicePage extends LitElement {
             <ha-svg-icon slot="icon" path=${mdiPlus}></ha-svg-icon>
           </mwc-fab>
         </ha-config-section>
-      </hass-subpage>
+      </hass-tabs-subpage>
     `;
   }
 
