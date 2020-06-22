@@ -41,6 +41,19 @@ export class LCNEntitiesDataTable extends LitElement {
 
   protected render() {
     return html`
+      <dom-module id="grid-custom-theme" theme-for="vaadin-grid">
+        <template>
+          <style>
+            :host(.lcn-table) [part~="row"]:hover > [part~="body-cell"] {
+              background-color: rgba(var(--rgb-primary-text-color), 0.04);
+            }
+            :host(.lcn-table) [part="row"] {
+              min-height: 40;
+            }
+          </style>
+        </template>
+      </dom-module>
+
       <vaadin-grid class="lcn-table" height-by-rows .items=${this.entities}>
         <vaadin-grid-column path="name" header="Name"></vaadin-grid-column>
         <vaadin-grid-column path="domain" header="Domain"></vaadin-grid-column>

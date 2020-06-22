@@ -76,7 +76,7 @@ export class LCNDevicePage extends LitElement {
         .hass=${this.hass}
         .narrow=${this.narrow}
         .route=${this.route}
-        back-path="/config/lcn"
+        .back-path="/config/lcn"
         .tabs=${configSections.general}
       >
         <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide}>
