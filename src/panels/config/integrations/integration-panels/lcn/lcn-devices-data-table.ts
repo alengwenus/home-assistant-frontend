@@ -132,7 +132,7 @@ export class LCNDevicesDataTable extends LitElement {
     navigate(this, `/config/lcn/device/${uniqueId}`);
   }
 
-  private async _deleteDevice(uniqueId) {
+  private async _deleteDevice(uniqueId: string) {
     const device = this.devices.find(
       (device) => device.unique_id === uniqueId
     )!;
@@ -153,14 +153,6 @@ export class LCNDevicesDataTable extends LitElement {
 
     await deleteDevice(this.hass, this.host, device);
     this._dispatchConfigurationChangedEvent();
-  }
-
-  static get styles(): CSSResult {
-    return css`
-      ha-icon-button {
-        --mdc-icon-button-size: 40px;
-      }
-    `;
   }
 }
 

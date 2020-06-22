@@ -1,5 +1,3 @@
-import "@vaadin/vaadin-grid";
-import { GridElement } from "@vaadin/vaadin-grid";
 import "../../../../../components/ha-icon-button";
 import {
   css,
@@ -9,19 +7,29 @@ import {
   query,
   CSSResult,
 } from "lit-element";
-import { html, render } from "lit-html";
+import memoizeOne from "memoize-one";
+import { html } from "lit-html";
 import { HomeAssistant } from "../../../../../types";
 import {
   LcnEntityConfig,
   deleteEntity,
   LcnDeviceConfig,
 } from "../../../../../data/lcn";
+import "../../../../../components/data-table/ha-data-table";
+import {
+  DataTableColumnContainer,
+  HaDataTable,
+} from "../../../../../components/data-table/ha-data-table";
+
+export interface EntityRowData extends LcnEntityConfig {}
 
 @customElement("lcn-entities-data-table")
 export class LCNEntitiesDataTable extends LitElement {
   @property() public hass!: HomeAssistant;
 
-  @property() public narrow: boolean = false;
+  @property() public isWide!: boolean;
+
+  @property() public narrow!: boolean;
 
   @property() public host: string = "";
 
@@ -29,62 +37,77 @@ export class LCNEntitiesDataTable extends LitElement {
 
   @property() public entities: LcnEntityConfig[] = [];
 
-  @query("vaadin-grid") private _grid!: GridElement;
+  @query("ha-data-table") private _dataTable!: HaDataTable;
 
-  protected firstUpdated(changedProperties) {
-    super.firstUpdated(changedProperties);
-  }
+  private _entities = memoizeOne((entities: LcnEntityConfig[]) => {
+    let entityRowData: EntityRowData[] = entities;
 
-  protected update(changedProperties) {
-    super.update(changedProperties);
-  }
+    entityRowData = entities.map((entity) => {
+      return {
+        ...entity,
+      };
+    });
+    return entityRowData;
+  });
+
+  private _columns = memoizeOne(
+    (narrow: boolean): DataTableColumnContainer =>
+      narrow
+        ? {
+            name: {
+              title: "Name",
+              sortable: true,
+              direction: "asc",
+              grows: true,
+            },
+          }
+        : {
+            name: {
+              title: "Name",
+              sortable: true,
+              direction: "asc",
+              grows: true,
+            },
+            domain: {
+              title: "Domain",
+              sortable: true,
+              direction: "asc",
+              grows: true,
+            },
+            resource: {
+              title: "Resource",
+              sortable: true,
+              direction: "asc",
+              grows: true,
+            },
+            unique_id: {
+              title: "",
+              sortable: false,
+              width: "60px",
+              template: (unique_id: string) =>
+                html`
+                  <ha-icon-button
+                    title="Delete LCN entity"
+                    icon="hass:delete"
+                    @click=${(ev) => {
+                      ev.stopPropagation();
+                      this._deleteEntity(unique_id);
+                    }}
+                  ></ha-icon-button>
+                `,
+            },
+          }
+  );
 
   protected render() {
     return html`
-      <dom-module id="grid-custom-theme" theme-for="vaadin-grid">
-        <template>
-          <style>
-            :host(.lcn-table) [part~="row"]:hover > [part~="body-cell"] {
-              background-color: rgba(var(--rgb-primary-text-color), 0.04);
-            }
-            :host(.lcn-table) [part="row"] {
-              min-height: 40;
-            }
-          </style>
-        </template>
-      </dom-module>
-
-      <vaadin-grid class="lcn-table" height-by-rows .items=${this.entities}>
-        <vaadin-grid-column path="name" header="Name"></vaadin-grid-column>
-        <vaadin-grid-column path="domain" header="Domain"></vaadin-grid-column>
-        <vaadin-grid-column
-          path="resource"
-          header="Resource"
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          id="delete-entity-column"
-          width="55px"
-          flex-grow="0"
-          .renderer=${this._deleteEntityRenderer.bind(this)}
-        ></vaadin-grid-column>
-      </vaadin-grid>
+      <ha-data-table
+        .columns=${this._columns(this.narrow)}
+        .data=${this._entities(this.entities)}
+        .id=${"unique_id"}
+        auto-height
+      ></ha-data-table>
     `;
-  }
-
-  private _deleteEntityRenderer(root, column, rowData) {
-    render(
-      html`
-        <ha-icon-button
-          title="Delete entity"
-          icon="hass:delete"
-        ></ha-icon-button>
-      `,
-      root
-    );
-    root.firstElementChild.onclick = (event) => {
-      event.stopPropagation();
-      this._deleteEntity(<LcnEntityConfig>rowData.item);
-    };
   }
 
   private _dispatchConfigurationChangedEvent() {
@@ -96,17 +119,13 @@ export class LCNEntitiesDataTable extends LitElement {
     );
   }
 
-  private async _deleteEntity(item: LcnEntityConfig) {
-    await deleteEntity(this.hass, this.host, item);
-    this._dispatchConfigurationChangedEvent();
-  }
+  private async _deleteEntity(uniqueId: string) {
+    const entity = this.entities.find(
+      (entity) => entity.unique_id === uniqueId
+    )!;
 
-  static get styles(): CSSResult {
-    return css`
-      ha-icon-button {
-        --mdc-icon-button-size: 40px;
-      }
-    `;
+    await deleteEntity(this.hass, this.host, entity);
+    this._dispatchConfigurationChangedEvent();
   }
 }
 
