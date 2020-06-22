@@ -66,7 +66,7 @@ export class LCNConfigDashboard extends LitElement {
     loadLCNScanModulesDialog();
     loadLCNCreateDeviceDialog();
 
-    this.addEventListener("lcn-config-changed", async (event) => {
+    this.addEventListener("lcn-config-changed", async (ev) => {
       this._fetchDevices(this._host);
     });
   }

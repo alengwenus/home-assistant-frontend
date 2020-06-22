@@ -19,6 +19,7 @@ import "../../../../../components/ha-card";
 import "../../../../../components/ha-svg-icon";
 import { haStyle } from "../../../../../resources/styles";
 import { mdiPlus } from "@mdi/js";
+import "./lcn-entities-data-table";
 import {
   fetchEntities,
   fetchDevice,
