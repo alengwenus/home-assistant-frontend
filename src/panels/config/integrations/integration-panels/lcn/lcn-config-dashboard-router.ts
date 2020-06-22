@@ -15,9 +15,9 @@ class LCNConfigDashboardRouter extends HassRouterPage {
 
   protected routerOptions: RouterOptions = {
     defaultPage: "devices",
-    showLoading: true,
-    preloadAll: true, // needed to render device page after page reload
-    cacheAll: true, // needed to keep host selection after return from device page
+    // showLoading: true,
+    // preloadAll: true, // needed to render device page after page reload
+    // cacheAll: true, // needed to keep host selection after return from device page
     routes: {
       devices: {
         tag: "lcn-config-dashboard",
