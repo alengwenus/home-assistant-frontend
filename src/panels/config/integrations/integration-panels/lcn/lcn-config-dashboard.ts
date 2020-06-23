@@ -60,12 +60,25 @@ export class LCNConfigDashboard extends LitElement {
 
   @property() private _deviceConfigs: LcnDeviceConfig[] = [];
 
-  protected firstUpdated(changedProperties: PropertyValues): void {
+  protected async firstUpdated(
+    changedProperties: PropertyValues
+  ): Promise<void> {
     super.firstUpdated(changedProperties);
-    this._fetchHosts();
+    await this._fetchHosts();
     loadLCNScanModulesDialog();
     loadLCNCreateDeviceDialog();
 
+    if (sessionStorage.getItem("lcn-host")) {
+      console.log("Not null");
+      this._host = sessionStorage.getItem("lcn-host")!;
+    } else {
+      console.log("Hallo");
+      console.log(this._hosts);
+      this._host = this._hosts[0].name;
+    }
+
+    console.log("Setting host...");
+    console.log(this._host);
     this.addEventListener("lcn-config-changed", async (ev) => {
       this._fetchDevices(this._host);
     });
@@ -98,7 +111,12 @@ export class LCNConfigDashboard extends LitElement {
                 label="Hosts"
                 @selected-item-changed=${this._hostChanged}
               >
-                <paper-listbox slot="dropdown-content" selected="0">
+                <paper-listbox
+                  slot="dropdown-content"
+                  selected=${this._hosts.findIndex(
+                    (host) => host.name === this._host
+                  )}
+                >
                   ${this._hosts.map((host) => {
                     return html`
                       <paper-item .itemValue=${host.name}
@@ -146,6 +164,7 @@ export class LCNConfigDashboard extends LitElement {
       return;
     }
     this._host = ev.detail.value.itemValue;
+    sessionStorage.setItem("lcn-host", this._host);
     this._fetchDevices(this._host);
   }
 
