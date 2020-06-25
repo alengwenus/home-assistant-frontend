@@ -1,5 +1,5 @@
 import "../../../../../../components/dialog/ha-paper-dialog";
-import "@polymer/paper-spinner/paper-spinner";
+import "../../../../../../components/ha-circular-progress";
 import {
   css,
   customElement,
@@ -37,7 +37,7 @@ export class ScanModulesDialog extends LitElement {
         </p>
 
         <div id="dialog-content">
-          <paper-spinner active></paper-spinner>
+          <ha-circular-progress active></ha-circluar-progress>
         </div>
       </ha-paper-dialog>
     `;
