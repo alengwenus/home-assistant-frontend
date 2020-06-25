@@ -2,7 +2,6 @@ import "@material/mwc-button";
 import "@polymer/paper-dropdown-menu/paper-dropdown-menu";
 import "@polymer/paper-item/paper-item";
 import "@polymer/paper-listbox/paper-listbox";
-import "@polymer/paper-spinner/paper-spinner";
 import "@material/mwc-fab";
 import {
   css,
