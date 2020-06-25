@@ -12,7 +12,11 @@ import { html } from "lit-html";
 import { HomeAssistant, Route } from "../../../../../types";
 import { showConfirmationDialog } from "../../../../../dialogs/generic/show-dialog-box";
 import { navigate } from "../../../../../common/navigate";
-import { LcnDeviceConfig, deleteDevice } from "../../../../../data/lcn";
+import {
+  LcnDeviceConfig,
+  deleteDevice,
+  LcnHost,
+} from "../../../../../data/lcn";
 import "../../../../../components/ha-icon-button";
 import { loadLCNCreateDeviceDialog } from "./dialogs/show-dialog-create-device";
 import "../../../../../components/data-table/ha-data-table";
@@ -33,7 +37,7 @@ export class LCNDevicesDataTable extends LitElement {
 
   @property() public route!: Route;
 
-  @property() public host: string = "";
+  @property() public host!: LcnHost;
 
   @property() public devices: LcnDeviceConfig[] = [];
 
@@ -151,7 +155,7 @@ export class LCNDevicesDataTable extends LitElement {
       return;
     }
 
-    await deleteDevice(this.hass, this.host, device);
+    await deleteDevice(this.hass, this.host.id, device);
     this._dispatchConfigurationChangedEvent();
   }
 }

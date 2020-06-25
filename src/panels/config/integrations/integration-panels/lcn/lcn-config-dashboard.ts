@@ -39,7 +39,7 @@ import {
   fetchDevices,
   scanDevices,
   addDevice,
-  LcnHosts,
+  LcnHost,
   LcnDeviceConfig,
 } from "../../../../../data/lcn";
 
@@ -53,9 +53,9 @@ export class LCNConfigDashboard extends LitElement {
 
   @property() public route!: Route;
 
-  @property() private _hosts: LcnHosts[] = [];
+  @property() private _hosts: LcnHost[] = [];
 
-  @property() private _host: string = "";
+  @property() private _host!: LcnHost;
 
   @property() private _deviceConfigs: LcnDeviceConfig[] = [];
 
@@ -67,24 +67,21 @@ export class LCNConfigDashboard extends LitElement {
     loadLCNScanModulesDialog();
     loadLCNCreateDeviceDialog();
 
-    if (sessionStorage.getItem("lcn-host")) {
-      console.log("Not null");
-      this._host = sessionStorage.getItem("lcn-host")!;
+    if (sessionStorage.getItem("lcn-host-id")) {
+      this._host = this._hosts.find((host) => {
+        return host.id === sessionStorage.getItem("lcn-host-id");
+      })!;
     } else {
-      console.log("Hallo");
-      console.log(this._hosts);
-      this._host = this._hosts[0].name;
+      this._host = this._hosts[0];
     }
 
-    console.log("Setting host...");
-    console.log(this._host);
     this.addEventListener("lcn-config-changed", async (ev) => {
       this._fetchDevices(this._host);
     });
   }
 
   protected render(): TemplateResult {
-    if (!this.hass) {
+    if (!(this.hass && this._host)) {
       return html` <hass-loading-screen></hass-loading-screen> `;
     }
     return html`
@@ -113,14 +110,12 @@ export class LCNConfigDashboard extends LitElement {
                 <paper-listbox
                   slot="dropdown-content"
                   selected=${this._hosts.findIndex(
-                    (host) => host.name === this._host
+                    (host) => host.id === this._host.id
                   )}
                 >
                   ${this._hosts.map((host) => {
                     return html`
-                      <paper-item .itemValue=${host.name}
-                        >${host.name}</paper-item
-                      >
+                      <paper-item .itemValue=${host}>${host.name}</paper-item>
                     `;
                   })}
                 </paper-listbox>
@@ -134,7 +129,7 @@ export class LCNConfigDashboard extends LitElement {
             </div>
           </div>
 
-          <ha-card header="Devices for host (${this._host})">
+          <ha-card header="Devices for host (${this._host.name})">
             <lcn-devices-data-table
               .hass=${this.hass}
               .host=${this._host}
@@ -163,7 +158,7 @@ export class LCNConfigDashboard extends LitElement {
       return;
     }
     this._host = ev.detail.value.itemValue;
-    sessionStorage.setItem("lcn-host", this._host);
+    sessionStorage.setItem("lcn-host-id", this._host.id);
     this._fetchDevices(this._host);
   }
 
@@ -171,22 +166,22 @@ export class LCNConfigDashboard extends LitElement {
     this._hosts = await fetchHosts(this.hass!);
   }
 
-  private async _fetchDevices(host: string) {
-    this._deviceConfigs = await fetchDevices(this.hass!, host);
+  private async _fetchDevices(host: LcnHost) {
+    this._deviceConfigs = await fetchDevices(this.hass!, host.id);
   }
 
-  private async _scanDevices(host: string) {
+  private async _scanDevices() {
     const dialog: () =>
       | ScanModulesDialog
       | undefined = showLCNScanModulesDialog(this);
-    this._deviceConfigs = await scanDevices(this.hass!, this._host);
+    this._deviceConfigs = await scanDevices(this.hass!, this._host.id);
     dialog()!.closeDialog();
   }
 
   private _addDevice() {
     showLCNCreateDeviceDialog(this, {
       createDevice: async (deviceParams) => {
-        if (!(await addDevice(this.hass, this._host, deviceParams))) {
+        if (!(await addDevice(this.hass, this._host.id, deviceParams))) {
           await showAlertDialog(this, {
             title: "Device already exists",
             text: `The specified
