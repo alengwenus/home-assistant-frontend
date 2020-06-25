@@ -1,7 +1,8 @@
 import { HomeAssistant } from "../types";
 
-export interface LcnHosts {
+export interface LcnHost {
   name: string;
+  id: string;
   ip_address: string;
   port: number;
 }
@@ -36,18 +37,18 @@ export interface LcnDeviceConfig {
   hardware_type: number;
 }
 
-export const fetchHosts = (hass: HomeAssistant): Promise<LcnHosts[]> =>
+export const fetchHosts = (hass: HomeAssistant): Promise<LcnHost[]> =>
   hass.callWS({
     type: "lcn/hosts",
   });
 
 export const fetchDevices = (
   hass: HomeAssistant,
-  host: string
+  hostId: string
 ): Promise<LcnDeviceConfig[]> =>
   hass.callWS({
     type: "lcn/devices",
-    host: host,
+    host_id: hostId,
   });
 
 export const fetchDevice = (
