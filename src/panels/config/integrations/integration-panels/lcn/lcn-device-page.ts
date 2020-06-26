@@ -21,11 +21,13 @@ import { haStyle } from "../../../../../resources/styles";
 import { mdiPlus } from "@mdi/js";
 import "./lcn-entities-data-table";
 import {
+  fetchHosts,
   fetchEntities,
   fetchDevice,
   addEntity,
   LcnDeviceConfig,
   LcnEntityConfig,
+  LcnHost,
 } from "../../../../../data/lcn";
 import {
   loadLCNCreateEntityDialog,
@@ -45,7 +47,11 @@ export class LCNDevicePage extends LitElement {
 
   @property() public uniqueDeviceId!: string;
 
-  @property() public host!: string;
+  @property() public hostId!: string;
+
+  @property() private _host!: LcnHost;
+
+  @property() private _hosts: LcnHost[] = [];
 
   // @property() private _device_configs: LcnDeviceConfig[] = [];
 
@@ -53,20 +59,31 @@ export class LCNDevicePage extends LitElement {
 
   @property() private _entityConfigs: LcnEntityConfig[] = [];
 
-  protected firstUpdated(changedProperties) {
+  protected async firstUpdated(changedProperties) {
     super.firstUpdated(changedProperties);
-    this.addEventListener("lcn-configuration-changed", async (event) => {
-      this._fetchEntities(this.host, this.uniqueDeviceId);
-    });
     loadLCNCreateEntityDialog();
+
+    await this._fetchHosts();
+    this._host = this._hosts.find((host) => {
+      return host.id === this.hostId;
+    })!;
+
+    this.addEventListener("lcn-configuration-changed", async (event) => {
+      this._fetchEntities(this._host.id, this.uniqueDeviceId);
+    });
+
+    this._fetchEntities(this._host.id, this.uniqueDeviceId);
   }
 
-  protected updated(changedProperties: PropertyValues): void {
-    if (changedProperties.has("host")) {
-      this._fetchEntities(this.host, this.uniqueDeviceId);
-    }
-    super.update(changedProperties);
-  }
+  // protected updated(changedProperties: PropertyValues): void {
+  //   if (changedProperties.has("hostId")) {
+  //     this._host = this._hosts.find((host) => {
+  //       return host.id === this.hostId;
+  //     })!;
+  //     this._fetchEntities(this.hostId, this.uniqueDeviceId);
+  //   }
+  //   super.update(changedProperties);
+  // }
 
   protected render(): TemplateResult {
     if (!this._deviceConfig && this._entityConfigs.length == 0) {
@@ -93,14 +110,14 @@ export class LCNDevicePage extends LitElement {
             header="Entities for ${this._deviceConfig.is_group
               ? "group"
               : "module"}
-              (${this.host}, ${this._deviceConfig.segment_id},
+              (${this._host.name}, ${this._deviceConfig.segment_id},
               ${this._deviceConfig.address_id})
               ${this._deviceConfig.name ? " - " + this._deviceConfig.name : ""}
             "
           >
             <lcn-entities-data-table
               .hass=${this.hass}
-              .host=${this.host}
+              .host=${this._host.id}
               .entities=${this._entityConfigs}
               .device=${this._deviceConfig}
               .narrow=${this.narrow}
@@ -131,6 +148,10 @@ export class LCNDevicePage extends LitElement {
     );
   }
 
+  private async _fetchHosts() {
+    this._hosts = await fetchHosts(this.hass!);
+  }
+
   private async _fetchEntities(host: string, uniqueDeviceId: string) {
     this._deviceConfig = await fetchDevice(this.hass!, host, uniqueDeviceId);
     this._entityConfigs = await fetchEntities(this.hass!, host, uniqueDeviceId);
@@ -140,7 +161,7 @@ export class LCNDevicePage extends LitElement {
     showLCNCreateEntityDialog(this, {
       device: <LcnDeviceConfig>this._deviceConfig,
       createEntity: async (entityParams) => {
-        if (!(await addEntity(this.hass, this.host, entityParams))) {
+        if (!(await addEntity(this.hass, this._host.id, entityParams))) {
           await showAlertDialog(this, {
             title: "LCN resource already assigned",
             text: `The specified LCN resource is already

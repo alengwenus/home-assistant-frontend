@@ -53,43 +53,43 @@ export const fetchDevices = (
 
 export const fetchDevice = (
   hass: HomeAssistant,
-  host: string,
-  unique_device_id: string
+  hostId: string,
+  uniqueDeviceId: string
 ): Promise<LcnDeviceConfig> =>
   hass.callWS({
     type: "lcn/device",
-    host: host,
-    unique_device_id: unique_device_id,
+    host_id: hostId,
+    unique_device_id: uniqueDeviceId,
   });
 
 export const fetchEntities = (
   hass: HomeAssistant,
-  host: string,
-  unique_device_id: string
+  hostId: string,
+  uniqueDeviceId: string
 ): Promise<LcnEntityConfig[]> =>
   hass.callWS({
     type: "lcn/entities",
-    host: host,
-    unique_device_id: unique_device_id,
+    host_id: hostId,
+    unique_device_id: uniqueDeviceId,
   });
 
 export const scanDevices = (
   hass: HomeAssistant,
-  host: string
+  hostId: string
 ): Promise<LcnDeviceConfig[]> =>
   hass.callWS({
     type: "lcn/device/scan",
-    host: host,
+    host_id: hostId,
   });
 
 export const addEntity = (
   hass: HomeAssistant,
-  host: string,
+  hostId: string,
   entity: Partial<LcnEntityConfig>
 ): Promise<boolean> =>
   hass.callWS({
     type: "lcn/entity/add",
-    host: host,
+    host_id: hostId,
     unique_device_id: entity.unique_device_id,
     name: entity.name,
     domain: entity.domain,
@@ -98,23 +98,23 @@ export const addEntity = (
 
 export const deleteEntity = (
   hass: HomeAssistant,
-  host: string,
+  hostId: string,
   entity: LcnEntityConfig
 ): Promise<void> =>
   hass.callWS({
     type: "lcn/entity/delete",
-    host: host,
+    host_id: hostId,
     unique_id: entity.unique_id,
   });
 
 export const addDevice = (
   hass: HomeAssistant,
-  host: string,
+  hostId: string,
   device: Partial<LcnDeviceConfig>
 ): Promise<boolean> =>
   hass.callWS({
     type: "lcn/device/add",
-    host: host,
+    host_id: hostId,
     segment_id: device.segment_id,
     address_id: device.address_id,
     is_group: device.is_group,
@@ -123,11 +123,11 @@ export const addDevice = (
 
 export const deleteDevice = (
   hass: HomeAssistant,
-  host: string,
+  hostId: string,
   device: LcnDeviceConfig
 ): Promise<void> =>
   hass.callWS({
     type: "lcn/device/delete",
-    host: host,
+    host_id: hostId,
     unique_id: device.unique_id,
   });
