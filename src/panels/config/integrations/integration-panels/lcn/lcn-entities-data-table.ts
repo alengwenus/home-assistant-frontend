@@ -14,6 +14,7 @@ import {
   LcnEntityConfig,
   deleteEntity,
   LcnDeviceConfig,
+  LcnHost,
 } from "../../../../../data/lcn";
 import "../../../../../components/data-table/ha-data-table";
 import {
@@ -31,7 +32,7 @@ export class LCNEntitiesDataTable extends LitElement {
 
   @property() public narrow!: boolean;
 
-  @property() public host: string = "";
+  @property() public host!: LcnHost;
 
   @property() public device!: LcnDeviceConfig;
 
@@ -124,7 +125,7 @@ export class LCNEntitiesDataTable extends LitElement {
       (entity) => entity.unique_id === uniqueId
     )!;
 
-    await deleteEntity(this.hass, this.host, entity);
+    await deleteEntity(this.hass, this.host.id, entity);
     this._dispatchConfigurationChangedEvent();
   }
 }

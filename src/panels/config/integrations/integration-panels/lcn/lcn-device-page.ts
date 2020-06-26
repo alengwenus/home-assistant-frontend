@@ -117,7 +117,7 @@ export class LCNDevicePage extends LitElement {
           >
             <lcn-entities-data-table
               .hass=${this.hass}
-              .host=${this._host.id}
+              .host=${this._host}
               .entities=${this._entityConfigs}
               .device=${this._deviceConfig}
               .narrow=${this.narrow}

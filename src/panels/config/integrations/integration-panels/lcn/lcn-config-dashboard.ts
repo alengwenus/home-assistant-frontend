@@ -67,10 +67,15 @@ export class LCNConfigDashboard extends LitElement {
     loadLCNScanModulesDialog();
     loadLCNCreateDeviceDialog();
 
+    console.log(sessionStorage.getItem("lcn-host-id"));
+
     if (sessionStorage.getItem("lcn-host-id")) {
       this._host = this._hosts.find((host) => {
         return host.id === sessionStorage.getItem("lcn-host-id");
       })!;
+      if (!this._host) {
+        this._host = this._hosts[0];
+      }
     } else {
       this._host = this._hosts[0];
     }
