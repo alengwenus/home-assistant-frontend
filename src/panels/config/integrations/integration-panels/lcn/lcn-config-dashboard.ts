@@ -24,15 +24,15 @@ import "../../../../../components/ha-card";
 import "../../../../../components/ha-svg-icon";
 import { haStyle } from "../../../../../resources/styles";
 import { mdiPlus } from "@mdi/js";
-import { ScanModulesDialog } from "./dialogs/lcn-scan-modules-dialog";
-import {
-  loadLCNScanModulesDialog,
-  showLCNScanModulesDialog,
-} from "./dialogs/show-dialog-scan-modules";
+import { ProgressDialog } from "./dialogs/progress-dialog";
 import {
   loadLCNCreateDeviceDialog,
   showLCNCreateDeviceDialog,
 } from "./dialogs/show-dialog-create-device";
+import {
+  loadProgressDialog,
+  showProgressDialog,
+} from "./dialogs/show-dialog-progress";
 import "./lcn-devices-data-table";
 import {
   fetchHosts,
@@ -64,10 +64,8 @@ export class LCNConfigDashboard extends LitElement {
   ): Promise<void> {
     super.firstUpdated(changedProperties);
     await this._fetchHosts();
-    loadLCNScanModulesDialog();
+    loadProgressDialog();
     loadLCNCreateDeviceDialog();
-
-    console.log(sessionStorage.getItem("lcn-host-id"));
 
     if (sessionStorage.getItem("lcn-host-id")) {
       this._host = this._hosts.find((host) => {
@@ -176,9 +174,14 @@ export class LCNConfigDashboard extends LitElement {
   }
 
   private async _scanDevices() {
-    const dialog: () =>
-      | ScanModulesDialog
-      | undefined = showLCNScanModulesDialog(this);
+    const dialog: () => ProgressDialog | undefined = showProgressDialog(this, {
+      title: "Scanning Modules",
+      text: html`
+        Scanning of modules might take up to 30 seconds.<br />
+        This dialog will close automatically.
+      `,
+    });
+
     this._deviceConfigs = await scanDevices(this.hass!, this._host.id);
     dialog()!.closeDialog();
   }
