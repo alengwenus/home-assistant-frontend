@@ -18,6 +18,8 @@ import { html } from "lit-html";
 import { PolymerChangedEvent } from "../../../../../../polymer-types";
 import { haStyleDialog } from "../../../../../../resources/styles";
 import { HomeAssistant } from "../../../../../../types";
+import { ProgressDialog } from "./progress-dialog";
+import { loadProgressDialog, showProgressDialog } from "./show-dialog-progress";
 import { LcnDeviceDialogParams } from "./show-dialog-create-device";
 import { LcnDeviceConfig } from "../../../../../../data/lcn";
 
@@ -40,6 +42,11 @@ export class CreateDeviceDialog extends LitElement {
   public async showDialog(params: LcnDeviceDialogParams): Promise<void> {
     this._params = params;
     await this.updateComplete;
+  }
+
+  protected firstUpdated(changedProperties: PropertyValues): void {
+    super.firstUpdated(changedProperties);
+    loadProgressDialog();
   }
 
   protected update(changedProperties: PropertyValues) {
@@ -148,7 +155,19 @@ export class CreateDeviceDialog extends LitElement {
       address_id: this._addressId,
       is_group: this._isGroup,
     };
+
+    const dialog: () => ProgressDialog | undefined = showProgressDialog(this, {
+      title: "Requesting device info from LCN",
+      text: html`
+        The information for the specified device is beeing requested from LCN.
+        This migh take several seconds.<br />
+        This dialog will close automatically.
+      `,
+    });
+
     await this._params!.createDevice(values);
+    dialog()!.closeDialog();
+
     this._closeDialog();
   }
 

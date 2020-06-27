@@ -12,14 +12,18 @@ import {
 import { html } from "lit-html";
 import { haStyleDialog } from "../../../../../../resources/styles";
 import { HomeAssistant } from "../../../../../../types";
+import { ProgressDialogParams } from "./show-dialog-progress";
 
-@customElement("lcn-scan-modules-dialog")
-export class ScanModulesDialog extends LitElement {
+@customElement("progress-dialog")
+export class ProgressDialog extends LitElement {
   @property() public hass!: HomeAssistant;
+
+  @property() private _params?: ProgressDialogParams;
 
   @query("ha-paper-dialog") private _dialog: any;
 
-  public async showDialog(params: any): Promise<void> {
+  public async showDialog(params: ProgressDialogParams): Promise<void> {
+    this._params = params;
     this.open();
   }
 
@@ -30,11 +34,8 @@ export class ScanModulesDialog extends LitElement {
   protected render(): TemplateResult {
     return html`
       <ha-paper-dialog with-backdrop modal @close-dialog=${this.closeDialog}>
-        <h2>Scanning modules...</h2>
-        <p>
-          Scanning of modules might take up to 30 seconds.<br />
-          This dialog will close automatically.
-        </p>
+        <h2>${this._params?.title}</h2>
+        <p>${this._params?.text}</p>
 
         <div id="dialog-content">
           <ha-circular-progress active></ha-circluar-progress>
@@ -65,6 +66,6 @@ export class ScanModulesDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lcn-scan-modules-dialog": ScanModulesDialog;
+    "progress-dialog": ProgressDialog;
   }
 }
