@@ -27,8 +27,6 @@ export class CreateDeviceDialog extends LitElement {
 
   @property() private _params?: LcnDeviceDialogParams;
 
-  @property() private _name: string = "";
-
   @property() private _isGroup: boolean = false;
 
   @property() private _segmentId: number = 0;
@@ -104,13 +102,6 @@ export class CreateDeviceDialog extends LitElement {
               : "Module ID must be 5..254"}
           >
           </paper-input>
-          <paper-input
-            label="Name"
-            placeholder=${this._isGroup ? "Group" : "Module"}
-            max-length="20"
-            @value-changed=${(event) => (this._name = event.detail.value)}
-          >
-          </paper-input>
         </form>
 
         <div class="buttons">
@@ -152,7 +143,7 @@ export class CreateDeviceDialog extends LitElement {
 
   private async _create(): Promise<void> {
     const values: Partial<LcnDeviceConfig> = {
-      name: this._name ? this._name : this._isGroup ? "Group" : "Module",
+      name: "",
       segment_id: this._segmentId,
       address_id: this._addressId,
       is_group: this._isGroup,

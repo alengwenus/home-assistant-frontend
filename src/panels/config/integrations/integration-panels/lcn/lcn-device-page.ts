@@ -75,16 +75,6 @@ export class LCNDevicePage extends LitElement {
     this._fetchEntities(this._host.id, this.uniqueDeviceId);
   }
 
-  // protected updated(changedProperties: PropertyValues): void {
-  //   if (changedProperties.has("hostId")) {
-  //     this._host = this._hosts.find((host) => {
-  //       return host.id === this.hostId;
-  //     })!;
-  //     this._fetchEntities(this.hostId, this.uniqueDeviceId);
-  //   }
-  //   super.update(changedProperties);
-  // }
-
   protected render(): TemplateResult {
     if (!this._deviceConfig && this._entityConfigs.length == 0) {
       return html` <hass-loading-screen></hass-loading-screen> `;
