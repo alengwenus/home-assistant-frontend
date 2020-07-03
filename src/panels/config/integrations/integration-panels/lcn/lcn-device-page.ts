@@ -68,10 +68,6 @@ export class LCNDevicePage extends LitElement {
       return host.id === this.hostId;
     })!;
 
-    this.addEventListener("lcn-configuration-changed", async (ev) => {
-      this._fetchEntities(this._host.id, this.uniqueDeviceId);
-    });
-
     this._fetchEntities(this._host.id, this.uniqueDeviceId);
   }
 
@@ -111,6 +107,8 @@ export class LCNDevicePage extends LitElement {
               .entities=${this._entityConfigs}
               .device=${this._deviceConfig}
               .narrow=${this.narrow}
+              @lcn-configuration-changed=${(ev) =>
+                this._fetchEntities(this._host.id, this.uniqueDeviceId)}
             ></lcn-entities-data-table>
           </ha-card>
 
@@ -127,15 +125,6 @@ export class LCNDevicePage extends LitElement {
         </ha-config-section>
       </hass-tabs-subpage>
     `;
-  }
-
-  private _dispatchConfigurationChangedEvent() {
-    this.dispatchEvent(
-      new CustomEvent("lcn-configuration-changed", {
-        bubbles: true,
-        composed: true,
-      })
-    );
   }
 
   private async _fetchHosts() {
@@ -160,7 +149,7 @@ export class LCNDevicePage extends LitElement {
           });
           return;
         }
-        this._dispatchConfigurationChangedEvent();
+        await this._fetchEntities(this._host.id, this.uniqueDeviceId);
       },
     });
   }

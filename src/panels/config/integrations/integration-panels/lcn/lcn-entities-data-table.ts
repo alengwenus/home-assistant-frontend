@@ -111,22 +111,19 @@ export class LCNEntitiesDataTable extends LitElement {
     `;
   }
 
-  private _dispatchConfigurationChangedEvent() {
-    this.dispatchEvent(
-      new CustomEvent("lcn-configuration-changed", {
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
   private async _deleteEntity(uniqueId: string) {
     const entity = this.entities.find(
       (entity) => entity.unique_id === uniqueId
     )!;
 
     await deleteEntity(this.hass, this.host.id, entity);
-    this._dispatchConfigurationChangedEvent();
+
+    this.dispatchEvent(
+      new CustomEvent("lcn-configuration-changed", {
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 }
 
