@@ -13,8 +13,8 @@ export interface SwitchConfig {
 
 export interface LightConfig {
   output: string;
-  dimmable?: boolean;
-  transition?: number;
+  dimmable: boolean;
+  transition: number;
 }
 
 export interface LcnEntityConfig {

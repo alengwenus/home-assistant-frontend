@@ -19,6 +19,7 @@ import { HomeAssistant } from "../../../../../../types";
 import { LcnEntityDialogParams } from "./show-dialog-create-entity";
 import { LcnEntityConfig } from "../../../../../../data/lcn";
 import "./lcn-config-switch";
+import "./lcn-config-light";
 
 @customElement("lcn-create-entity-dialog")
 export class CreateEntityDialog extends LitElement {
@@ -40,6 +41,9 @@ export class CreateEntityDialog extends LitElement {
 
   public async showDialog(params: LcnEntityDialogParams): Promise<void> {
     this._params = params;
+    // this.addEventListener("validity-changed", (ev) => {
+    //   this._invalid = ev.detail;
+    // });
     await this.updateComplete;
   }
 
@@ -107,12 +111,19 @@ export class CreateEntityDialog extends LitElement {
   }
 
   private renderDomain(domain) {
-    if (domain == "switch") {
-      return html`<lcn-config-switch-element
-        id="domain"
-      ></lcn-config-switch-element>`;
-    } else {
-      return html``;
+    switch (domain) {
+      case "light":
+        return html`<lcn-config-light-element
+          id="domain"
+          @validity-changed=${(ev) => (this._invalid = ev.detail)}
+        ></lcn-config-light-element>`;
+      case "switch":
+        return html`<lcn-config-switch-element
+          id="domain"
+          @validity-changed=${(ev) => (this._invalid = ev.detail)}
+        ></lcn-config-switch-element>`;
+      default:
+        return html``;
     }
   }
 
