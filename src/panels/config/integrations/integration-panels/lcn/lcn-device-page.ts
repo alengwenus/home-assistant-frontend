@@ -68,7 +68,7 @@ export class LCNDevicePage extends LitElement {
       return host.id === this.hostId;
     })!;
 
-    this.addEventListener("lcn-configuration-changed", async (event) => {
+    this.addEventListener("lcn-configuration-changed", async (ev) => {
       this._fetchEntities(this._host.id, this.uniqueDeviceId);
     });
 

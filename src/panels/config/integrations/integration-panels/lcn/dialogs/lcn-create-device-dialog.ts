@@ -92,7 +92,7 @@ export class CreateDeviceDialog extends LitElement {
             type="number"
             value="0"
             min="0"
-            @value-changed=${(event) => (this._segmentId = +event.detail.value)}
+            @value-changed=${(ev) => (this._segmentId = +ev.detail.value)}
             .invalid=${this._validateSegmentId(this._segmentId)}
             error-message="Segment ID must be 0, 5..128."
           >
