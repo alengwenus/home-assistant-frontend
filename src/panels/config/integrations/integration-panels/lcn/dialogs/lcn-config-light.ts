@@ -16,6 +16,8 @@ import {
   queryAll,
 } from "lit-element";
 import { html } from "lit-html";
+import "../../../../../../components/ha-switch";
+import { HomeAssistant } from "../../../../../../types";
 import { haStyleDialog } from "../../../../../../resources/styles";
 import { LightConfig } from "../../../../../../data/lcn";
 
@@ -26,6 +28,8 @@ interface Port {
 
 @customElement("lcn-config-light-element")
 export class LCNConfigLightElement extends LitElement {
+  @property() public hass!: HomeAssistant;
+
   @property() public domainData: LightConfig = {
     output: "OUTPUT1",
     dimmable: false,
@@ -34,15 +38,11 @@ export class LCNConfigLightElement extends LitElement {
 
   @property() private _portType: string = "output";
 
-  @property() private _transition: number = 0;
-
   @property() private _invalid: boolean = false;
 
   @query("#ports-listbox") private _portsListBox;
 
   @queryAll("paper-input") private _inputs: any;
-
-  private _dimmable: boolean = false;
 
   private _outputPorts: Port[] = [
     { name: "Output 1", value: "OUTPUT1" },
@@ -80,7 +80,7 @@ export class LCNConfigLightElement extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <form>
+      <div>
         <label>Port:</label>
         <paper-radio-group
           name="port"
@@ -105,18 +105,28 @@ export class LCNConfigLightElement extends LitElement {
               `;
             })}
         </paper-dropdown-menu>
+
+        <div id="dimmable">
+          <label>Dimmable:</label>
+          <ha-switch
+            .checked=${this.domainData.dimmable}
+            @change=${(ev) => (this.domainData.dimmable = ev.target.checked)}
+          ></ha-switch>
+        </div>
+
         <paper-input
             label="Transition"
             type="number"
             value=0
             min=0
             max=486
-            @value-changed=${(ev) => (this._transition = +ev.detail.value)}
-            .invalid=${this._validateTransition(this._transition)}
+            @value-changed=${(ev) =>
+              (this.domainData.transition = +ev.detail.value)}
+            .invalid=${this._validateTransition(this.domainData.transition)}
             error-message="Transition must be in 0..486."
         >
         </paper-input>
-      </form>
+      </div>
       `;
   }
 
@@ -146,6 +156,12 @@ export class LCNConfigLightElement extends LitElement {
       css`
         #ports-listbox {
           width: 120px;
+        }
+        #dimmable {
+          margin-top: 10px;
+        }
+        ha-switch {
+          margin-left: 25px;
         }
       `,
     ];
