@@ -13,6 +13,7 @@ import {
   query,
 } from "lit-element";
 import { html } from "lit-html";
+import { HomeAssistant } from "../../../../../../types";
 import { haStyleDialog } from "../../../../../../resources/styles";
 import { SwitchConfig } from "../../../../../../data/lcn";
 
@@ -23,6 +24,8 @@ interface Port {
 
 @customElement("lcn-config-switch-element")
 export class LCNConfigSwitchElement extends LitElement {
+  @property() public hass!: HomeAssistant;
+
   @property() public domainData: SwitchConfig = { output: "OUTPUT1" };
 
   @property() private _portType: string = "output";

@@ -75,7 +75,7 @@ export class CreateEntityDialog extends LitElement {
           </div>
         </app-toolbar>
 
-        <form>
+        <div>
           <paper-dropdown-menu
             label="Domain"
             @selected-item-changed=${this._domain_changed}
@@ -96,7 +96,7 @@ export class CreateEntityDialog extends LitElement {
           >
           </paper-input>
           ${this.renderDomain(this.domain)}
-        </form>
+        </div>
 
         <div class="buttons">
           <mwc-button @click="${this._closeDialog}">
@@ -115,11 +115,13 @@ export class CreateEntityDialog extends LitElement {
       case "light":
         return html`<lcn-config-light-element
           id="domain"
+          .hass=${this.hass}
           @validity-changed=${(ev) => (this._invalid = ev.detail)}
         ></lcn-config-light-element>`;
       case "switch":
         return html`<lcn-config-switch-element
           id="domain"
+          .hass=${this.hass}
           @validity-changed=${(ev) => (this._invalid = ev.detail)}
         ></lcn-config-switch-element>`;
       default:
