@@ -19,6 +19,7 @@ import { HomeAssistant } from "../../../../../../types";
 import { LcnEntityDialogParams } from "./show-dialog-create-entity";
 import { LcnEntityConfig } from "../../../../../../data/lcn";
 import "./lcn-config-binary-sensor";
+import "./lcn-config-climate";
 import "./lcn-config-cover";
 import "./lcn-config-light";
 import "./lcn-config-sensor";
@@ -36,12 +37,9 @@ export class CreateEntityDialog extends LitElement {
 
   @property() private _invalid: boolean = false;
 
-  // @query("#domain") private _domainElement;
-
-  // @queryAll("paper-input") private _inputs: any;
-
   private _domains: string[] = [
     "binary_sensor",
+    "climate",
     "cover",
     "light",
     "sensor",
@@ -126,6 +124,13 @@ export class CreateEntityDialog extends LitElement {
           id="domain"
           .hass=${this.hass}
         ></lcn-config-binary-sensor-element>`;
+      case "climate":
+        return html`<lcn-config-climate-element
+          id="domain"
+          .hass=${this.hass}
+          .softwareSerial=${this._params?.device.software_serial}
+          @validity-changed=${(ev) => (this._invalid = ev.detail)}
+        ></lcn-config-climate-element>`;
       case "cover":
         return html`<lcn-config-cover-element
           id="domain"

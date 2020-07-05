@@ -54,10 +54,7 @@ export class LCNConfigCoverElement extends LitElement {
   protected render(): TemplateResult {
     return html`
       <form>
-        <paper-dropdown-menu
-          label="Motor"
-          .value=${this._motors[0].name}
-        >
+        <paper-dropdown-menu label="Motor" .value=${this._motors[0].name}>
           <paper-listbox
             id="motors-listbox"
             slot="dropdown-content"
@@ -68,40 +65,37 @@ export class LCNConfigCoverElement extends LitElement {
                 <paper-item .itemValue=${motor.value}>${motor.name}</paper-item>
               `;
             })}
+          </paper-listbox>
         </paper-dropdown-menu>
 
-        ${
-          this.domainData.motor === "OUTPUTS"
-            ? html`
-                <paper-dropdown-menu
-                  label="Reverse time"
-                  .value=${this._reverseTimes[0].name}
+        ${this.domainData.motor === "OUTPUTS"
+          ? html`
+              <paper-dropdown-menu
+                label="Reverse time"
+                .value=${this._reverseTimes[0].name}
+              >
+                <paper-listbox
+                  id="reverse-times-listbox"
+                  slot="dropdown-content"
+                  @selected-item-changed=${this._reverseTimeChanged}
                 >
-                  <paper-listbox
-                    id="reverse-times-listbox"
-                    slot="dropdown-content"
-                    @selected-item-changed=${this._reverseTimeChanged}
-                  >
-                    ${this._reverseTimes.map((rt) => {
-                      return html`
-                        <paper-item .itemValue=${rt.value}
-                          >${rt.name}</paper-item
-                        >
-                      `;
-                    })}
-                </paper-dropdown-menu>
-              `
-            : html``
-        }
-        </form>
-      `;
+                  ${this._reverseTimes.map((rt) => {
+                    return html`
+                      <paper-item .itemValue=${rt.value}>${rt.name}</paper-item>
+                    `;
+                  })}
+                </paper-listbox>
+              </paper-dropdown-menu>
+            `
+          : html``}
+      </form>
+    `;
   }
 
   private _motorChanged(ev: CustomEvent): void {
     if (!ev.detail.value) {
       return;
     }
-    console.log(this._motorsListBox.selected);
     const motor = this._motors[this._motorsListBox.selected];
     this.domainData.motor = motor.value;
     this.requestUpdate();
@@ -111,7 +105,6 @@ export class LCNConfigCoverElement extends LitElement {
     if (!ev.detail.value) {
       return;
     }
-    console.log(this._reverseTimesListBox.selected);
     const reverseTime = this._reverseTimes[this._reverseTimesListBox.selected];
     this.domainData.reverse_time = reverseTime.value;
   }

@@ -78,9 +78,10 @@ export class LCNConfigSwitchElement extends LitElement {
                 <paper-item .itemValue=${port.value}>${port.name}</paper-item>
               `;
             })}
+          </paper-listbox>
         </paper-dropdown-menu>
       </form>
-      `;
+    `;
   }
 
   private _portTypeChanged(ev: CustomEvent): void {
