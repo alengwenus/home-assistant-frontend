@@ -11,6 +11,15 @@ export interface BinarySensorConfig {
   source: string;
 }
 
+export interface ClimateConfig {
+  source: string;
+  setpoint: string;
+  max_temp: number;
+  min_temp: number;
+  lockable: boolean;
+  unit_of_measurement: string;
+}
+
 export interface CoverConfig {
   motor: string;
   reverse_time: string;

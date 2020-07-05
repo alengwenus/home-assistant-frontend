@@ -160,6 +160,12 @@ export class LCNConfigSensorElement extends LitElement {
     { name: "Degree (angle)", value: "DEGREE" },
   ];
 
+  protected async firstUpdated(changedProperties) {
+    super.firstUpdated(changedProperties);
+
+    this.domainData.source = this._sourceTypes[0].value[0].value;
+  }
+
   protected render(): TemplateResult {
     return html`
       <form>
@@ -179,6 +185,7 @@ export class LCNConfigSensorElement extends LitElement {
                 >
               `;
             })}
+          </paper-listbox>
         </paper-dropdown-menu>
 
         <paper-dropdown-menu
@@ -197,27 +204,27 @@ export class LCNConfigSensorElement extends LitElement {
                 >
               `;
             })}
+          </paper-listbox>
         </paper-dropdown-menu>
 
         <paper-dropdown-menu
-        label="Unit of measurement"
-        .value=${this._varUnits[0].name}
-      >
-        <paper-listbox
-          id="units-listbox"
-          slot="dropdown-content"
-          @selected-changed=${this._unitChanged}
+          label="Unit of measurement"
+          .value=${this._varUnits[0].name}
         >
-          ${this._varUnits.map((unit) => {
-            return html`
-              <paper-item .itemValue=${unit.value}>${unit.name}</paper-item>
-            `;
-          })}
-      </paper-dropdown-menu>
-
-
+          <paper-listbox
+            id="units-listbox"
+            slot="dropdown-content"
+            @selected-changed=${this._unitChanged}
+          >
+            ${this._varUnits.map((unit) => {
+              return html`
+                <paper-item .itemValue=${unit.value}>${unit.name}</paper-item>
+              `;
+            })}
+          </paper-listbox>
+        </paper-dropdown-menu>
       </form>
-      `;
+    `;
   }
 
   private _sourceTypeChanged(ev: CustomEvent): void {
@@ -227,19 +234,16 @@ export class LCNConfigSensorElement extends LitElement {
       this._sourcesListBox.selected
     ];
     this.domainData.source = source.value;
-    console.log(this.domainData.source);
   }
 
   private _sourceChanged(ev: CustomEvent): void {
     const source = this._sourceTypes[this._sourceType].value[ev.detail.value];
     this.domainData.source = source.value;
-    console.log(this.domainData.source);
   }
 
   private _unitChanged(ev: CustomEvent): void {
     const unit = this._varUnits[ev.detail.value];
     this.domainData.unit_of_measurement = unit.value;
-    console.log(this.domainData.unit_of_measurement);
   }
 
   static get styles(): CSSResult[] {

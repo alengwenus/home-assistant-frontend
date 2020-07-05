@@ -1,6 +1,7 @@
 import "@polymer/paper-dropdown-menu/paper-dropdown-menu";
 import "@polymer/paper-item/paper-item";
 import "@polymer/paper-input/paper-input";
+import { PaperInputElement } from "@polymer/paper-input/paper-input";
 import "@polymer/paper-listbox/paper-listbox";
 import "@polymer/paper-radio-button";
 import "@polymer/paper-radio-group";
@@ -42,7 +43,7 @@ export class LCNConfigLightElement extends LitElement {
 
   @query("#ports-listbox") private _portsListBox;
 
-  @queryAll("paper-input") private _inputs: any;
+  @queryAll("paper-input") private _inputs!: PaperInputElement[];
 
   private _outputPorts: Port[] = [
     { name: "Output 1", value: "OUTPUT1" },
@@ -103,6 +104,7 @@ export class LCNConfigLightElement extends LitElement {
                 <paper-item .itemValue=${port.value}>${port.name}</paper-item>
               `;
             })}
+          </paper-listbox>
         </paper-dropdown-menu>
 
         <div id="dimmable">
@@ -114,19 +116,18 @@ export class LCNConfigLightElement extends LitElement {
         </div>
 
         <paper-input
-            label="Transition"
-            type="number"
-            value=0
-            min=0
-            max=486
-            @value-changed=${(ev) =>
-              (this.domainData.transition = +ev.detail.value)}
-            .invalid=${this._validateTransition(this.domainData.transition)}
-            error-message="Transition must be in 0..486."
-        >
-        </paper-input>
+          label="Transition"
+          type="number"
+          value="0"
+          min="0"
+          max="486"
+          @value-changed=${(ev) =>
+            (this.domainData.transition = +ev.detail.value)}
+          .invalid=${this._validateTransition(this.domainData.transition)}
+          error-message="Transition must be in 0..486."
+        ></paper-input>
       </div>
-      `;
+    `;
   }
 
   private _portTypeChanged(ev: CustomEvent): void {
