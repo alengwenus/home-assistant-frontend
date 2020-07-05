@@ -18,8 +18,9 @@ import { haStyleDialog } from "../../../../../../resources/styles";
 import { HomeAssistant } from "../../../../../../types";
 import { LcnEntityDialogParams } from "./show-dialog-create-entity";
 import { LcnEntityConfig } from "../../../../../../data/lcn";
-import "./lcn-config-switch";
+import "./lcn-config-cover";
 import "./lcn-config-light";
+import "./lcn-config-switch";
 
 @customElement("lcn-create-entity-dialog")
 export class CreateEntityDialog extends LitElement {
@@ -37,7 +38,7 @@ export class CreateEntityDialog extends LitElement {
 
   // @queryAll("paper-input") private _inputs: any;
 
-  private _domains: string[] = ["switch", "light"];
+  private _domains: string[] = ["cover", "light", "switch"];
 
   public async showDialog(params: LcnEntityDialogParams): Promise<void> {
     this._params = params;
@@ -112,6 +113,13 @@ export class CreateEntityDialog extends LitElement {
 
   private renderDomain(domain) {
     switch (domain) {
+      case "cover":
+        return html`<lcn-config-cover-element
+          id="domain"
+          .hass=${this.hass}
+          .softwareSerial=${this._params?.device.software_serial}
+          @validity-changed=${(ev) => (this._invalid = ev.detail)}
+        ></lcn-config-cover-element>`;
       case "light":
         return html`<lcn-config-light-element
           id="domain"

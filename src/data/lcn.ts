@@ -7,14 +7,19 @@ export interface LcnHost {
   port: number;
 }
 
-export interface SwitchConfig {
-  output: string;
+export interface CoverConfig {
+  motor: string;
+  reverse_time: string;
 }
 
 export interface LightConfig {
   output: string;
   dimmable: boolean;
   transition: number;
+}
+
+export interface SwitchConfig {
+  output: string;
 }
 
 export interface LcnEntityConfig {
