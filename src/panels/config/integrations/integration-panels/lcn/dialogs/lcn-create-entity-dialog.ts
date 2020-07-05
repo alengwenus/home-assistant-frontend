@@ -18,8 +18,10 @@ import { haStyleDialog } from "../../../../../../resources/styles";
 import { HomeAssistant } from "../../../../../../types";
 import { LcnEntityDialogParams } from "./show-dialog-create-entity";
 import { LcnEntityConfig } from "../../../../../../data/lcn";
+import "./lcn-config-binary-sensor";
 import "./lcn-config-cover";
 import "./lcn-config-light";
+import "./lcn-config-sensor";
 import "./lcn-config-switch";
 
 @customElement("lcn-create-entity-dialog")
@@ -38,7 +40,13 @@ export class CreateEntityDialog extends LitElement {
 
   // @queryAll("paper-input") private _inputs: any;
 
-  private _domains: string[] = ["cover", "light", "switch"];
+  private _domains: string[] = [
+    "binary_sensor",
+    "cover",
+    "light",
+    "sensor",
+    "switch",
+  ];
 
   public async showDialog(params: LcnEntityDialogParams): Promise<void> {
     this._params = params;
@@ -113,12 +121,16 @@ export class CreateEntityDialog extends LitElement {
 
   private renderDomain(domain) {
     switch (domain) {
+      case "binary_sensor":
+        return html`<lcn-config-binary-sensor-element
+          id="domain"
+          .hass=${this.hass}
+        ></lcn-config-binary-sensor-element>`;
       case "cover":
         return html`<lcn-config-cover-element
           id="domain"
           .hass=${this.hass}
           .softwareSerial=${this._params?.device.software_serial}
-          @validity-changed=${(ev) => (this._invalid = ev.detail)}
         ></lcn-config-cover-element>`;
       case "light":
         return html`<lcn-config-light-element
@@ -126,11 +138,16 @@ export class CreateEntityDialog extends LitElement {
           .hass=${this.hass}
           @validity-changed=${(ev) => (this._invalid = ev.detail)}
         ></lcn-config-light-element>`;
+      case "sensor":
+        return html`<lcn-config-sensor-element
+          id="domain"
+          .hass=${this.hass}
+          .softwareSerial=${this._params?.device.software_serial}
+        ></lcn-config-sensor-element>`;
       case "switch":
         return html`<lcn-config-switch-element
           id="domain"
           .hass=${this.hass}
-          @validity-changed=${(ev) => (this._invalid = ev.detail)}
         ></lcn-config-switch-element>`;
       default:
         return html``;

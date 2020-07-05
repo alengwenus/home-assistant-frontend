@@ -7,6 +7,10 @@ export interface LcnHost {
   port: number;
 }
 
+export interface BinarySensorConfig {
+  source: string;
+}
+
 export interface CoverConfig {
   motor: string;
   reverse_time: string;
@@ -16,6 +20,11 @@ export interface LightConfig {
   output: string;
   dimmable: boolean;
   transition: number;
+}
+
+export interface SensorConfig {
+  source: string;
+  unit_of_measurement: string;
 }
 
 export interface SwitchConfig {
@@ -28,7 +37,7 @@ export interface LcnEntityConfig {
   unique_device_id: string;
   domain: string;
   resource: string;
-  domain_data: SwitchConfig[] | LightConfig[];
+  domain_data: CoverConfig[] | LightConfig[] | SensorConfig[] | SwitchConfig[];
 }
 
 export interface LcnDeviceConfig {

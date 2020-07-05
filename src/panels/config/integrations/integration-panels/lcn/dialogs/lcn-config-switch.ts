@@ -84,6 +84,9 @@ export class LCNConfigSwitchElement extends LitElement {
   }
 
   private _portTypeChanged(ev: CustomEvent): void {
+    if (!ev.detail.value) {
+      return;
+    }
     this._portType = ev.detail.value;
     this._portsListBox.selectIndex(0);
 

@@ -101,6 +101,7 @@ export class LCNConfigCoverElement extends LitElement {
     if (!ev.detail.value) {
       return;
     }
+    console.log(this._motorsListBox.selected);
     const motor = this._motors[this._motorsListBox.selected];
     this.domainData.motor = motor.value;
     this.requestUpdate();
@@ -110,6 +111,7 @@ export class LCNConfigCoverElement extends LitElement {
     if (!ev.detail.value) {
       return;
     }
+    console.log(this._reverseTimesListBox.selected);
     const reverseTime = this._reverseTimes[this._reverseTimesListBox.selected];
     this.domainData.reverse_time = reverseTime.value;
   }
