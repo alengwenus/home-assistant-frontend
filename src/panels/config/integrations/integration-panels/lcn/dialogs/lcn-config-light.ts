@@ -68,7 +68,6 @@ export class LCNConfigLightElement extends LitElement {
     super.update(changedProperties);
     const isInvalid = (inp) => inp.invalid;
     this._invalid = Array.from(this._inputs).some(isInvalid);
-    console.log("Update");
     this.dispatchEvent(
       new CustomEvent("validity-changed", {
         detail: this._invalid,
