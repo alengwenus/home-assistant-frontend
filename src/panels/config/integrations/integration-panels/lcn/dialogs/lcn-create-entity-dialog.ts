@@ -22,6 +22,7 @@ import "./lcn-config-binary-sensor";
 import "./lcn-config-climate";
 import "./lcn-config-cover";
 import "./lcn-config-light";
+import "./lcn-config-scene";
 import "./lcn-config-sensor";
 import "./lcn-config-switch";
 
@@ -42,6 +43,7 @@ export class CreateEntityDialog extends LitElement {
     "climate",
     "cover",
     "light",
+    "scene",
     "sensor",
     "switch",
   ];
@@ -143,6 +145,12 @@ export class CreateEntityDialog extends LitElement {
           .hass=${this.hass}
           @validity-changed=${(ev) => (this._invalid = ev.detail)}
         ></lcn-config-light-element>`;
+      case "scene":
+        return html`<lcn-config-scene-element
+          id="domain"
+          .hass=${this.hass}
+          @validity-changed=${(ev) => (this._invalid = ev.detail)}
+        ></lcn-config-scene-element>`;
       case "sensor":
         return html`<lcn-config-sensor-element
           id="domain"
