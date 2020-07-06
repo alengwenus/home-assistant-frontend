@@ -31,6 +31,13 @@ export interface LightConfig {
   transition: number;
 }
 
+export interface SceneConfig {
+  register: number;
+  scene: number;
+  outputs: string[];
+  transition: number;
+}
+
 export interface SensorConfig {
   source: string;
   unit_of_measurement: string;

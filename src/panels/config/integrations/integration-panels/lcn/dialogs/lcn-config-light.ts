@@ -22,7 +22,7 @@ import { HomeAssistant } from "../../../../../../types";
 import { haStyleDialog } from "../../../../../../resources/styles";
 import { LightConfig } from "../../../../../../data/lcn";
 
-interface Port {
+interface ConfigItem {
   name: string;
   value: string;
 }
@@ -45,14 +45,14 @@ export class LCNConfigLightElement extends LitElement {
 
   @queryAll("paper-input") private _inputs!: PaperInputElement[];
 
-  private _outputPorts: Port[] = [
+  private _outputPorts: ConfigItem[] = [
     { name: "Output 1", value: "OUTPUT1" },
     { name: "Output 2", value: "OUTPUT2" },
     { name: "Output 3", value: "OUTPUT3" },
     { name: "Output 4", value: "OUTPUT4" },
   ];
 
-  private _relayPorts: Port[] = [
+  private _relayPorts: ConfigItem[] = [
     { name: "Relay 1", value: "RELAY1" },
     { name: "Relay 2", value: "RELAY2" },
     { name: "Relay 3", value: "RELAY3" },
@@ -121,8 +121,10 @@ export class LCNConfigLightElement extends LitElement {
           value="0"
           min="0"
           max="486"
-          @value-changed=${(ev) =>
-            (this.domainData.transition = +ev.detail.value)}
+          @value-changed=${(ev) => {
+            this.domainData.transition = +ev.detail.value;
+            this.requestUpdate();
+          }}
           .invalid=${this._validateTransition(this.domainData.transition)}
           error-message="Transition must be in 0..486."
         ></paper-input>
