@@ -66,6 +66,10 @@ const integrationsWithPanel = {
     buttonLocalizeKey: "ui.panel.config.zwave.button",
     path: "/config/zwave",
   },
+  lcn: {
+    buttonLocalizeKey: "ui.panel.config.lcn.button",
+    path: "/config/lcn",
+  },
 };
 
 @customElement("ha-integration-card")

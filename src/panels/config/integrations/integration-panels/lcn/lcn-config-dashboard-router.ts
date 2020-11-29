@@ -4,6 +4,7 @@ import {
   RouterOptions,
 } from "../../../../../layouts/hass-router-page";
 import { HomeAssistant } from "../../../../../types";
+import { navigate } from "../../../../../common/navigate";
 
 @customElement("lcn-config-dashboard-router")
 class LCNConfigDashboardRouter extends HassRouterPage {
@@ -13,6 +14,10 @@ class LCNConfigDashboardRouter extends HassRouterPage {
 
   @property() public narrow!: boolean;
 
+  private _configEntry = new URLSearchParams(window.location.search).get(
+    "config_entry"
+  );
+
   protected routerOptions: RouterOptions = {
     defaultPage: "devices",
     // showLoading: true,
@@ -21,17 +26,11 @@ class LCNConfigDashboardRouter extends HassRouterPage {
     routes: {
       devices: {
         tag: "lcn-config-dashboard",
-        load: () =>
-          import(
-            /* webpackChunkName: "lcn-config-devices" */ "./lcn-config-dashboard"
-          ),
+        load: () => import("./lcn-config-dashboard"),
       },
       device: {
         tag: "lcn-device-page",
-        load: () =>
-          import(
-            /* webpackChunkName: "lcn-devices-page" */ "./lcn-device-page"
-          ),
+        load: () => import("./lcn-device-page"),
       },
     },
   };
@@ -44,6 +43,12 @@ class LCNConfigDashboardRouter extends HassRouterPage {
     if (this._currentPage === "device") {
       el.hostId = this.routeTail.path.substr(1).split("/")[0];
       el.uniqueDeviceId = this.routeTail.path.substr(1).split("/")[1];
+    } else if (this._currentPage === "devices") {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (this._configEntry && !searchParams.has("config_entry")) {
+        // searchParams.append("config_entry", this._configEntry);
+        el.hostId = this._configEntry;
+      }
     }
   }
 }
