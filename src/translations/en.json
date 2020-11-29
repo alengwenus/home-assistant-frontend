@@ -2201,6 +2201,7 @@
           }
         },
         "lcn": {
+          "button": "Configure",
           "caption": "LCN",
           "title": "Local Control Network",
           "header": "Configure LCN",

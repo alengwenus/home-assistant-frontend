@@ -53,6 +53,8 @@ export class LCNConfigDashboard extends LitElement {
 
   @property() public route!: Route;
 
+  @property() public hostId!: string;
+
   @property() private _hosts: LcnHost[] = [];
 
   @property() private _host!: LcnHost;
@@ -67,7 +69,16 @@ export class LCNConfigDashboard extends LitElement {
     loadProgressDialog();
     loadLCNCreateDeviceDialog();
 
-    if (sessionStorage.getItem("lcn-host-id")) {
+    if (this.hostId) {
+      // host_id externally set (via searchParams)
+      this._host = this._hosts.find((host) => {
+        return host.id === this.hostId;
+      })!;
+      if (!this._host) {
+        this._host = this._hosts[0];
+      }
+    } else if (sessionStorage.getItem("lcn-host-id")) {
+      // host_id from sessionSTorage
       this._host = this._hosts.find((host) => {
         return host.id === sessionStorage.getItem("lcn-host-id");
       })!;
@@ -75,6 +86,7 @@ export class LCNConfigDashboard extends LitElement {
         this._host = this._hosts[0];
       }
     } else {
+      // all other cases
       this._host = this._hosts[0];
     }
 

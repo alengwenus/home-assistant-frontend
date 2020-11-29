@@ -301,7 +301,7 @@ class HaPanelConfig extends HassRouterPage {
         tag: "lcn-config-dashboard-router",
         load: () =>
           import(
-            /* webpackChunkName: "panel-config-lcn" */ "./integrations/integration-panels/lcn/lcn-config-dashboard-router"
+            "./integrations/integration-panels/lcn/lcn-config-dashboard-router"
           ),
       },
       zha: {
