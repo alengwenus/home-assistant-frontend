@@ -149,7 +149,7 @@ export class LCNConfigSensorElement extends LitElement {
     { name: "LCN native", value: "NATIVE" },
     { name: "Celsius", value: "°C" },
     { name: "Fahrenheit", value: "°F" },
-    { name: "Kelvin", value: "°K" },
+    { name: "Kelvin", value: "K" },
     { name: "Lux", value: "LUX_T" },
     { name: "Lux (I-Port)", value: "LUX_I" },
     { name: "Humidity (%)", value: "PERCENT" },
