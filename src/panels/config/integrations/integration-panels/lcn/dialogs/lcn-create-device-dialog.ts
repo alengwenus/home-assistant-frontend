@@ -12,6 +12,7 @@ import {
   PropertyValues,
   TemplateResult,
   CSSResult,
+  query,
   queryAll,
 } from "lit-element";
 import { html } from "lit-html";
@@ -22,6 +23,8 @@ import { ProgressDialog } from "./progress-dialog";
 import { loadProgressDialog, showProgressDialog } from "./show-dialog-progress";
 import { LcnDeviceDialogParams } from "./show-dialog-create-device";
 import { LcnDeviceConfig } from "../../../../../../data/lcn";
+import type { HaPaperDialog } from "../../../../../../components/dialog/ha-paper-dialog";
+import { fireEvent } from "../../../../../../common/dom/fire_event";
 
 @customElement("lcn-create-device-dialog")
 export class CreateDeviceDialog extends LitElement {
@@ -37,11 +40,14 @@ export class CreateDeviceDialog extends LitElement {
 
   @property() private _invalid: boolean = false;
 
+  @query("ha-paper-dialog", true) private _dialog!: HaPaperDialog;
+
   @queryAll("paper-input") private _inputs: any;
 
   public async showDialog(params: LcnDeviceDialogParams): Promise<void> {
     this._params = params;
     await this.updateComplete;
+    fireEvent(this._dialog as HTMLElement, "iron-resize");
   }
 
   protected firstUpdated(changedProperties: PropertyValues): void {
@@ -59,11 +65,11 @@ export class CreateDeviceDialog extends LitElement {
     if (!this._params) {
       return html``;
     }
-
     return html`
       <ha-paper-dialog
         with-backdrop
         opened
+        modal
         @opened-changed=${this._openedChanged}
       >
         <app-toolbar>
