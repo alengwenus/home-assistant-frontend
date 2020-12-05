@@ -4,7 +4,6 @@ import {
   RouterOptions,
 } from "../../../../../layouts/hass-router-page";
 import { HomeAssistant } from "../../../../../types";
-import { navigate } from "../../../../../common/navigate";
 
 @customElement("lcn-config-dashboard-router")
 class LCNConfigDashboardRouter extends HassRouterPage {
@@ -20,7 +19,7 @@ class LCNConfigDashboardRouter extends HassRouterPage {
 
   protected routerOptions: RouterOptions = {
     defaultPage: "devices",
-    // showLoading: true,
+    showLoading: true,
     // preloadAll: true, // needed to render device page after page reload
     // cacheAll: true, // needed to keep host selection after return from device page
     routes: {

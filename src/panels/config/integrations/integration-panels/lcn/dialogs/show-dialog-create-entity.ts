@@ -7,9 +7,7 @@ export interface LcnEntityDialogParams {
 }
 
 export const loadLCNCreateEntityDialog = () =>
-  import(
-    /* webpackChunkName: "lcn-create-entity-dialog" */ "./lcn-create-entity-dialog"
-  );
+  import("./lcn-create-entity-dialog");
 
 export const showLCNCreateEntityDialog = (
   element: HTMLElement,

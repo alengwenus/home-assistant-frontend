@@ -11,6 +11,7 @@ import {
   property,
   TemplateResult,
   CSSResult,
+  query,
 } from "lit-element";
 import { html } from "lit-html";
 import { PolymerChangedEvent } from "../../../../../../polymer-types";
@@ -18,6 +19,8 @@ import { haStyleDialog } from "../../../../../../resources/styles";
 import { HomeAssistant } from "../../../../../../types";
 import { LcnEntityDialogParams } from "./show-dialog-create-entity";
 import { LcnEntityConfig } from "../../../../../../data/lcn";
+import type { HaPaperDialog } from "../../../../../../components/dialog/ha-paper-dialog";
+import { fireEvent } from "../../../../../../common/dom/fire_event";
 import "./lcn-config-binary-sensor";
 import "./lcn-config-climate";
 import "./lcn-config-cover";
@@ -38,6 +41,8 @@ export class CreateEntityDialog extends LitElement {
 
   @property() private _invalid: boolean = false;
 
+  @query("ha-paper-dialog", true) private _dialog!: HaPaperDialog;
+
   private _domains: string[] = [
     "binary_sensor",
     "climate",
@@ -54,6 +59,7 @@ export class CreateEntityDialog extends LitElement {
     //   this._invalid = ev.detail;
     // });
     await this.updateComplete;
+    fireEvent(this._dialog as HTMLElement, "iron-resize");
   }
 
   // protected update(changedProperties: PropertyValues) {
@@ -66,11 +72,11 @@ export class CreateEntityDialog extends LitElement {
     if (!this._params) {
       return html``;
     }
-
     return html`
       <ha-paper-dialog
         with-backdrop
         opened
+        modal
         @opened-changed=${this._openedChanged}
       >
         <app-toolbar>

@@ -13,8 +13,7 @@ export interface ProgressDialogParams {
   title?: string;
 }
 
-export const loadProgressDialog = () =>
-  import(/* webpackChunkName: "progress-dialog" */ "./progress-dialog");
+export const loadProgressDialog = () => import("./progress-dialog");
 
 export const showProgressDialog = (
   element: HTMLElement,

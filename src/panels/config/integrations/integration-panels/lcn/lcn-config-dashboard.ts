@@ -195,7 +195,7 @@ export class LCNConfigDashboard extends LitElement {
     });
 
     this._deviceConfigs = await scanDevices(this.hass!, this._host.id);
-    dialog()!.closeDialog();
+    await dialog()!.closeDialog();
   }
 
   private _addDevice() {
