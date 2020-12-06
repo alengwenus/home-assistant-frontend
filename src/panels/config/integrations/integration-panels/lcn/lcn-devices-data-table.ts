@@ -1,12 +1,5 @@
 import "@polymer/paper-tooltip/paper-tooltip";
-import {
-  css,
-  customElement,
-  CSSResult,
-  LitElement,
-  property,
-  query,
-} from "lit-element";
+import { customElement, LitElement, property } from "lit-element";
 import memoizeOne from "memoize-one";
 import { html } from "lit-html";
 import { HomeAssistant, Route } from "../../../../../types";
@@ -20,16 +13,13 @@ import {
 import "../../../../../components/ha-icon-button";
 import { loadLCNCreateDeviceDialog } from "./dialogs/show-dialog-create-device";
 import "../../../../../components/data-table/ha-data-table";
-import {
-  DataTableColumnContainer,
-  HaDataTable,
-} from "../../../../../components/data-table/ha-data-table";
+import { DataTableColumnContainer } from "../../../../../components/data-table/ha-data-table";
 
 export interface DeviceRowData extends LcnDeviceConfig {}
 
 @customElement("lcn-devices-data-table")
 export class LCNDevicesDataTable extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public isWide!: boolean;
 
@@ -40,8 +30,6 @@ export class LCNDevicesDataTable extends LitElement {
   @property() public host!: LcnHost;
 
   @property() public devices: LcnDeviceConfig[] = [];
-
-  @query("ha-data-table") private _dataTable!: HaDataTable;
 
   private _devices = memoizeOne((devices: LcnDeviceConfig[]) => {
     let deviceRowData: DeviceRowData[] = devices;

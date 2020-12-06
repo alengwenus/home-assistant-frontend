@@ -17,7 +17,7 @@ import { HomeAssistant, Route } from "../../../../../types";
 import { computeRTL } from "../../../../../common/util/compute_rtl";
 import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box";
 import "../../../../../layouts/hass-tabs-subpage";
-import { configSections } from "../../../ha-panel-config";
+import type { PageNavigation } from "../../../../../layouts/hass-tabs-subpage";
 import "../../../ha-config-section";
 import "../../../../../layouts/hass-loading-screen";
 import "../../../../../components/ha-card";
@@ -43,9 +43,11 @@ import {
   LcnDeviceConfig,
 } from "../../../../../data/lcn";
 
+export const lcnTabs: PageNavigation[] = [];
+
 @customElement("lcn-config-dashboard")
 export class LCNConfigDashboard extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public isWide!: boolean;
 
@@ -104,8 +106,8 @@ export class LCNConfigDashboard extends LitElement {
         .hass=${this.hass}
         .narrow=${this.narrow}
         .route=${this.route}
-        back-path="/config"
-        .tabs=${configSections.general}
+        back-path="/config/integrations"
+        .tabs=${lcnTabs}
       >
         <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide}>
           <span slot="header">
