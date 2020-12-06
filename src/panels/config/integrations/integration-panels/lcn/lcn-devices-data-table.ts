@@ -121,7 +121,7 @@ export class LCNDevicesDataTable extends LitElement {
   }
 
   private _openDevice(uniqueId) {
-    navigate(this, `/config/lcn/device/${this.host.id}/${uniqueId}`);
+    navigate(this, `/config/lcn/entities/${this.host.id}/${uniqueId}`);
   }
 
   private async _deleteDevice(uniqueId: string) {
