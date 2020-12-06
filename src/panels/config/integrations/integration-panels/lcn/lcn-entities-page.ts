@@ -12,7 +12,6 @@ import { HomeAssistant, Route } from "../../../../../types";
 import { computeRTL } from "../../../../../common/util/compute_rtl";
 import "../../../../../layouts/hass-tabs-subpage";
 import type { PageNavigation } from "../../../../../layouts/hass-tabs-subpage";
-import { configSections } from "../../../ha-panel-config";
 import "../../../ha-config-section";
 import "../../../../../layouts/hass-loading-screen";
 import "../../../../../components/ha-card";
@@ -37,8 +36,8 @@ import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box"
 
 export const lcnTabs: PageNavigation[] = [];
 
-@customElement("lcn-device-page")
-export class LCNDevicePage extends LitElement {
+@customElement("lcn-entities-page")
+export class LCNEntitiesPage extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public isWide!: boolean;
@@ -189,6 +188,6 @@ export class LCNDevicePage extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lcn-device-page": LCNDevicePage;
+    "lcn-entities-page": LCNEntitiesPage;
   }
 }

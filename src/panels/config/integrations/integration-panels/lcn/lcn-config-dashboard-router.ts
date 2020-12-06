@@ -27,9 +27,9 @@ class LCNConfigDashboardRouter extends HassRouterPage {
         tag: "lcn-config-dashboard",
         load: () => import("./lcn-config-dashboard"),
       },
-      device: {
-        tag: "lcn-device-page",
-        load: () => import("./lcn-device-page"),
+      entities: {
+        tag: "lcn-entities-page",
+        load: () => import("./lcn-entities-page"),
       },
     },
   };
@@ -39,7 +39,7 @@ class LCNConfigDashboardRouter extends HassRouterPage {
     el.hass = this.hass;
     el.isWide = this.isWide;
     el.narrow = this.narrow;
-    if (this._currentPage === "device") {
+    if (this._currentPage === "entities") {
       el.hostId = this.routeTail.path.substr(1).split("/")[0];
       el.uniqueDeviceId = this.routeTail.path.substr(1).split("/")[1];
     } else if (this._currentPage === "devices") {

@@ -178,12 +178,6 @@ export const configSections: { [name: string]: PageNavigation[] } = {
       core: true,
     },
     {
-      component: "lcn",
-      path: "/config/lcn",
-      translationKey: "ui.panel.config.lcn.caption",
-      iconPath: mdiTools,
-    },
-    {
       component: "zha",
       path: "/config/zha",
       translationKey: "component.zha.title",
