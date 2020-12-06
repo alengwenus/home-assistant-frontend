@@ -27,7 +27,7 @@ interface ConfigItem {
 
 @customElement("lcn-config-scene-element")
 export class LCNConfigSceneElement extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() private _invalid: boolean = false;
 

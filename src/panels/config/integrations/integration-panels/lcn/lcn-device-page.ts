@@ -4,7 +4,6 @@ import {
   customElement,
   LitElement,
   property,
-  PropertyValues,
   TemplateResult,
   CSSResult,
 } from "lit-element";
@@ -12,6 +11,7 @@ import { html } from "lit-html";
 import { HomeAssistant, Route } from "../../../../../types";
 import { computeRTL } from "../../../../../common/util/compute_rtl";
 import "../../../../../layouts/hass-tabs-subpage";
+import type { PageNavigation } from "../../../../../layouts/hass-tabs-subpage";
 import { configSections } from "../../../ha-panel-config";
 import "../../../ha-config-section";
 import "../../../../../layouts/hass-loading-screen";
@@ -35,9 +35,11 @@ import {
 } from "./dialogs/show-dialog-create-entity";
 import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box";
 
+export const lcnTabs: PageNavigation[] = [];
+
 @customElement("lcn-device-page")
 export class LCNDevicePage extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public isWide!: boolean;
 
@@ -52,8 +54,6 @@ export class LCNDevicePage extends LitElement {
   @property() private _host!: LcnHost;
 
   @property() private _hosts: LcnHost[] = [];
-
-  // @property() private _device_configs: LcnDeviceConfig[] = [];
 
   @property() private _deviceConfig!: LcnDeviceConfig;
 
@@ -80,8 +80,8 @@ export class LCNDevicePage extends LitElement {
         .hass=${this.hass}
         .narrow=${this.narrow}
         .route=${this.route}
-        .back-path="/config/lcn"
-        .tabs=${configSections.general}
+        back-path="/config/lcn"
+        .tabs=${lcnTabs}
       >
         <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide}>
           <span slot="header">

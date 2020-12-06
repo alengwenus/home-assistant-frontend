@@ -31,7 +31,7 @@ import "./lcn-config-switch";
 
 @customElement("lcn-create-entity-dialog")
 export class CreateEntityDialog extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() private _params?: LcnEntityDialogParams;
 

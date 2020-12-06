@@ -29,7 +29,7 @@ interface ConfigItem {
 
 @customElement("lcn-config-light-element")
 export class LCNConfigLightElement extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public domainData: LightConfig = {
     output: "OUTPUT1",

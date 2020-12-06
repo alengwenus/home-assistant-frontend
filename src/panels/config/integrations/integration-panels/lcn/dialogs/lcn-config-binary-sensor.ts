@@ -29,7 +29,7 @@ interface ConfigItemCollection {
 
 @customElement("lcn-config-binary-sensor-element")
 export class LCNConfigBinarySensorElement extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public domainData: BinarySensorConfig = {
     source: "BINSENSOR1",
@@ -146,13 +146,11 @@ export class LCNConfigBinarySensorElement extends LitElement {
       this._sourcesListBox.selected
     ];
     this.domainData.source = source.value;
-    console.log(this.domainData.source);
   }
 
   private _sourceChanged(ev: CustomEvent): void {
     const source = this._sourceTypes[this._sourceType].value[ev.detail.value];
     this.domainData.source = source.value;
-    console.log(this.domainData.source);
   }
 
   static get styles(): CSSResult[] {

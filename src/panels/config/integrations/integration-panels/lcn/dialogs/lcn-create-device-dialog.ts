@@ -28,7 +28,7 @@ import { fireEvent } from "../../../../../../common/dom/fire_event";
 
 @customElement("lcn-create-device-dialog")
 export class CreateDeviceDialog extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() private _params?: LcnDeviceDialogParams;
 

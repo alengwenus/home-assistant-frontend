@@ -24,7 +24,7 @@ interface ConfigItem {
 
 @customElement("lcn-config-switch-element")
 export class LCNConfigSwitchElement extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public domainData: SwitchConfig = { output: "OUTPUT1" };
 

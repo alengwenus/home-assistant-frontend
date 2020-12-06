@@ -26,7 +26,7 @@ export interface EntityRowData extends LcnEntityConfig {}
 
 @customElement("lcn-entities-data-table")
 export class LCNEntitiesDataTable extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public isWide!: boolean;
 

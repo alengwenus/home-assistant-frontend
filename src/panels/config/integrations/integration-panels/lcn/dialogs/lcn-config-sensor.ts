@@ -29,7 +29,7 @@ interface ConfigItemCollection {
 
 @customElement("lcn-config-sensor-element")
 export class LCNConfigSensorElement extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public softwareSerial: number = -1;
 

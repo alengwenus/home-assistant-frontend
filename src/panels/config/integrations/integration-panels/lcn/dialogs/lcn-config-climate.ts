@@ -28,7 +28,7 @@ interface ConfigItem {
 
 @customElement("lcn-config-climate-element")
 export class LCNConfigClimateElement extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public softwareSerial: number = -1;
 

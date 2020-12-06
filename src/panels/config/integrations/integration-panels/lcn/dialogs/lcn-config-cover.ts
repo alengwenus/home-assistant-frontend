@@ -24,7 +24,7 @@ interface ConfigItem {
 
 @customElement("lcn-config-cover-element")
 export class LCNConfigCoverElement extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() public software_serial: number = -1;
 

@@ -18,7 +18,7 @@ import { fireEvent } from "../../../../../../common/dom/fire_event";
 
 @customElement("progress-dialog")
 export class ProgressDialog extends LitElement {
-  @property() public hass!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property() private _params?: ProgressDialogParams;
 
