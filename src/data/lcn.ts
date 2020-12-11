@@ -49,7 +49,7 @@ export interface SwitchConfig {
 
 export interface LcnEntityConfig {
   name: string;
-  unique_id: string;
+  // unique_id: string;
   unique_device_id: string;
   domain: string;
   resource: string;
@@ -134,7 +134,9 @@ export const deleteEntity = (
   hass.callWS({
     type: "lcn/entity/delete",
     host_id: hostId,
-    unique_id: entity.unique_id,
+    unique_device_id: entity.unique_device_id,
+    domain: entity.domain,
+    resource: entity.resource,
   });
 
 export const addDevice = (
