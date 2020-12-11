@@ -81,18 +81,23 @@ export class LCNEntitiesDataTable extends LitElement {
               direction: "asc",
               grows: true,
             },
-            unique_id: {
+            unique_device_id: {
               title: "",
               sortable: false,
               width: "60px",
-              template: (unique_id: string) =>
+              template: (unique_device_id, entity) =>
                 html`
                   <ha-icon-button
                     title="Delete LCN entity"
                     icon="hass:delete"
                     @click=${(ev) => {
                       ev.stopPropagation();
-                      this._deleteEntity(unique_id);
+                      console.log(ev);
+                      this._deleteEntity(
+                        unique_device_id,
+                        entity.domain,
+                        entity.resource
+                      );
                     }}
                   ></ha-icon-button>
                 `,
@@ -111,9 +116,16 @@ export class LCNEntitiesDataTable extends LitElement {
     `;
   }
 
-  private async _deleteEntity(uniqueId: string) {
+  private async _deleteEntity(
+    uniqueDeviceId: string,
+    domain: string,
+    resource: string
+  ) {
     const entity = this.entities.find(
-      (entity) => entity.unique_id === uniqueId
+      (entity) =>
+        entity.unique_device_id === uniqueDeviceId &&
+        entity.domain === domain &&
+        entity.resource === resource
     )!;
 
     await deleteEntity(this.hass, this.host.id, entity);
