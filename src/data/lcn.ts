@@ -7,6 +7,8 @@ export interface LcnHost {
   port: number;
 }
 
+export type LcnAddress = [number, number, boolean];
+
 export interface BinarySensorConfig {
   source: string;
 }
@@ -48,20 +50,16 @@ export interface SwitchConfig {
 }
 
 export interface LcnEntityConfig {
+  address: LcnAddress;
   name: string;
-  // unique_id: string;
-  unique_device_id: string;
   domain: string;
   resource: string;
   domain_data: CoverConfig[] | LightConfig[] | SensorConfig[] | SwitchConfig[];
 }
 
 export interface LcnDeviceConfig {
+  address: LcnAddress;
   name: string;
-  unique_id: string;
-  segment_id: number;
-  address_id: number;
-  is_group: boolean;
   hardware_serial: number;
   software_serial: number;
   hardware_type: number;
@@ -84,23 +82,23 @@ export const fetchDevices = (
 export const fetchDevice = (
   hass: HomeAssistant,
   hostId: string,
-  uniqueDeviceId: string
+  address: LcnAddress
 ): Promise<LcnDeviceConfig> =>
   hass.callWS({
     type: "lcn/device",
     host_id: hostId,
-    unique_device_id: uniqueDeviceId,
+    address: address,
   });
 
 export const fetchEntities = (
   hass: HomeAssistant,
   hostId: string,
-  uniqueDeviceId: string
+  address: LcnAddress
 ): Promise<LcnEntityConfig[]> =>
   hass.callWS({
     type: "lcn/entities",
     host_id: hostId,
-    unique_device_id: uniqueDeviceId,
+    address: address,
   });
 
 export const scanDevices = (
@@ -120,7 +118,7 @@ export const addEntity = (
   hass.callWS({
     type: "lcn/entity/add",
     host_id: hostId,
-    unique_device_id: entity.unique_device_id,
+    address: entity.address,
     name: entity.name,
     domain: entity.domain,
     domain_data: entity.domain_data,
@@ -134,7 +132,7 @@ export const deleteEntity = (
   hass.callWS({
     type: "lcn/entity/delete",
     host_id: hostId,
-    unique_device_id: entity.unique_device_id,
+    address: entity.address,
     domain: entity.domain,
     resource: entity.resource,
   });
@@ -147,9 +145,7 @@ export const addDevice = (
   hass.callWS({
     type: "lcn/device/add",
     host_id: hostId,
-    segment_id: device.segment_id,
-    address_id: device.address_id,
-    is_group: device.is_group,
+    address: device.address,
     name: device.name,
   });
 
@@ -161,5 +157,22 @@ export const deleteDevice = (
   hass.callWS({
     type: "lcn/device/delete",
     host_id: hostId,
-    unique_id: device.unique_id,
+    address: device.address,
   });
+
+export const createAddressString = (address: LcnAddress): string => {
+  // convert address tuple into string (e.g. m000007) for use in url
+  const segId = address[0].toString().padStart(3, "0");
+  const addrId = address[1].toString().padStart(3, "0");
+  const isGroup = address[2] ? "g" : "m";
+  return isGroup + segId + addrId;
+};
+
+export const parseAddressString = (addressString: string): LcnAddress => {
+  // convert address string (e.g. m000007) into address tuple
+  return [
+    +addressString.slice(1, 4),
+    +addressString.slice(4, 7),
+    addressString[0] === "g",
+  ];
+};

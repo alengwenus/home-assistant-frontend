@@ -15,6 +15,7 @@ import {
   deleteEntity,
   LcnDeviceConfig,
   LcnHost,
+  LcnAddress,
 } from "../../../../../data/lcn";
 import "../../../../../components/data-table/ha-data-table";
 import {
@@ -81,11 +82,11 @@ export class LCNEntitiesDataTable extends LitElement {
               direction: "asc",
               grows: true,
             },
-            unique_device_id: {
+            address: {
               title: "",
               sortable: false,
               width: "60px",
-              template: (unique_device_id, entity) =>
+              template: (address, entity) =>
                 html`
                   <ha-icon-button
                     title="Delete LCN entity"
@@ -94,7 +95,7 @@ export class LCNEntitiesDataTable extends LitElement {
                       ev.stopPropagation();
                       console.log(ev);
                       this._deleteEntity(
-                        unique_device_id,
+                        address,
                         entity.domain,
                         entity.resource
                       );
@@ -117,13 +118,15 @@ export class LCNEntitiesDataTable extends LitElement {
   }
 
   private async _deleteEntity(
-    uniqueDeviceId: string,
+    address: LcnAddress,
     domain: string,
     resource: string
   ) {
     const entity = this.entities.find(
       (entity) =>
-        entity.unique_device_id === uniqueDeviceId &&
+        entity.address[0] === address[0] &&
+        entity.address[1] === address[1] &&
+        entity.address[2] === address[2] &&
         entity.domain === domain &&
         entity.resource === resource
     )!;

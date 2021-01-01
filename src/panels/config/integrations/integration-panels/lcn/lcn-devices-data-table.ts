@@ -9,6 +9,8 @@ import {
   LcnDeviceConfig,
   deleteDevice,
   LcnHost,
+  LcnAddress,
+  createAddressString,
 } from "../../../../../data/lcn";
 import "../../../../../components/ha-icon-button";
 import { loadLCNCreateDeviceDialog } from "./dialogs/show-dialog-create-device";
@@ -75,18 +77,18 @@ export class LCNDevicesDataTable extends LitElement {
               sortable: true,
               width: "90px",
             },
-            unique_id: {
+            address: {
               title: "",
               sortable: false,
               width: "60px",
-              template: (unique_id: string) =>
+              template: (address: LcnAddress) =>
                 html`
                   <ha-icon-button
                     title="Delete LCN device"
                     icon="hass:delete"
                     @click=${(ev) => {
                       ev.stopPropagation();
-                      this._deleteDevice(unique_id);
+                      this._deleteDevice(address);
                     }}
                   ></ha-icon-button>
                 `,
@@ -104,7 +106,7 @@ export class LCNDevicesDataTable extends LitElement {
       <ha-data-table
         .columns=${this._columns(this.narrow)}
         .data=${this._devices(this.devices)}
-        .id=${"unique_id"}
+        .id=${"address"}
         @row-click=${(ev) => this._openDevice(ev.detail.id)}
         auto-height
       ></ha-data-table>
@@ -120,22 +122,27 @@ export class LCNDevicesDataTable extends LitElement {
     );
   }
 
-  private _openDevice(uniqueId) {
-    navigate(this, `/config/lcn/entities/${this.host.id}/${uniqueId}`);
+  private _openDevice(address) {
+    // convert address tuple into string (e.g. m000007) for use in url
+    const addressString = createAddressString(address);
+    navigate(this, `/config/lcn/entities/${this.host.id}/${addressString}`);
   }
 
-  private async _deleteDevice(uniqueId: string) {
+  private async _deleteDevice(address: LcnAddress) {
     const device = this.devices.find(
-      (device) => device.unique_id === uniqueId
+      (device) =>
+        device.address[0] === address[0] &&
+        device.address[1] === address[1] &&
+        device.address[2] === address[2]
     )!;
 
     if (
       !(await showConfirmationDialog(this, {
         title: `Delete
-          ${device.is_group ? "group" : "module"}`,
+          ${device.address[2] ? "group" : "module"}`,
         text: html` You are about to remove
-          ${device.is_group ? "group" : "module"} ${device.address_id} in
-          segment ${device.segment_id}
+          ${device.address[2] ? "group" : "module"} ${device.address[1]} in
+          segment ${device.address[0]}
           ${device.name ? `('${device.name}')` : ""}.<br />
           Removing a device will also delete all associated entities!`,
       }))

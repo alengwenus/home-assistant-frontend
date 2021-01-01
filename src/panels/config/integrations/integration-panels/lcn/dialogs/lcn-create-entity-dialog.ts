@@ -184,7 +184,7 @@ export class CreateEntityDialog extends LitElement {
 
     const values: Partial<LcnEntityConfig> = {
       name: this._name ? this._name : this.domain,
-      unique_device_id: this._params!.device.unique_id,
+      address: this._params!.device.address,
       domain: this.domain,
       domain_data: domainElement.domainData,
     };

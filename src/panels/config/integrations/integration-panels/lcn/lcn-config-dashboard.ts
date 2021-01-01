@@ -207,9 +207,9 @@ export class LCNConfigDashboard extends LitElement {
           await showAlertDialog(this, {
             title: "Device already exists",
             text: `The specified
-                  ${deviceParams.is_group ? "group" : "module"}
-                  with address ${deviceParams.address_id}
-                  in segment ${deviceParams.segment_id}
+                  ${deviceParams.address[2] ? "group" : "module"}
+                  with address ${deviceParams.address[1]}
+                  in segment ${deviceParams.address[0]}
                   already exists.
                   Devices have to be unique.`,
           });

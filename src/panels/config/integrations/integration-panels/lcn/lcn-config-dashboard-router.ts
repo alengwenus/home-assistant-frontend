@@ -1,4 +1,5 @@
 import { customElement, property } from "lit-element";
+import { parseAddressString } from "../../../../../data/lcn";
 import {
   HassRouterPage,
   RouterOptions,
@@ -41,7 +42,9 @@ class LCNConfigDashboardRouter extends HassRouterPage {
     el.narrow = this.narrow;
     if (this._currentPage === "entities") {
       el.hostId = this.routeTail.path.substr(1).split("/")[0];
-      el.uniqueDeviceId = this.routeTail.path.substr(1).split("/")[1];
+      const addressString = this.routeTail.path.substr(1).split("/")[1];
+      const address = parseAddressString(addressString);
+      el.address = address;
     } else if (this._currentPage === "devices") {
       const searchParams = new URLSearchParams(window.location.search);
       if (this._configEntry && !searchParams.has("config_entry")) {
