@@ -157,9 +157,7 @@ export class CreateDeviceDialog extends LitElement {
   private async _create(): Promise<void> {
     const values: Partial<LcnDeviceConfig> = {
       name: "",
-      segment_id: this._segmentId,
-      address_id: this._addressId,
-      is_group: this._isGroup,
+      address: [this._segmentId, this._addressId, this._isGroup],
     };
 
     const dialog: () => ProgressDialog | undefined = showProgressDialog(this, {
